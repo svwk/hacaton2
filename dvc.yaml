@@ -1,0 +1,65 @@
+stages:
+  data_prepare:
+    cmd: python3 scripts/data_scripts/data_prepare.py data/raw/SF_Mandarin_dataset_ver3_csv.csv
+    deps:
+      - data/raw/SF_Mandarin_dataset_ver3_csv.csv
+      - scripts/data_scripts/data_prepare.py
+      - scripts/data_scripts/data_methods.py
+    outs:
+      - data/stage_data_prepare
+
+#  fix_errors:
+#    cmd: python3 scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
+#    deps:
+#    - data/stage_data_prepare/dataset.csv
+#    - scripts/data_scripts/fix_errors.py
+#    - scripts/data_scripts/data_methods.py
+#    outs:
+#    - data/stage_fix_errors
+#  fill_na:
+#    cmd: python3 scripts/data_scripts/fill_na.py data/stage_fix_errors/dataset.csv
+#    deps:
+#    - data/stage_fix_errors/dataset.csv
+#    - scripts/data_scripts/fill_na.py
+#    - scripts/data_scripts/data_methods.py
+#    outs:
+#    - data/stage_fill_na
+#
+#  create_features:
+#    cmd: python3 scripts/data_scripts/create_features.py data/stage_fill_na/dataset.csv
+#    deps:
+#    - data/stage_fill_na/dataset.csv
+#    - scripts/data_scripts/create_features.py
+#    - scripts/data_scripts/data_methods.py
+#    outs:
+#    - data/stage_create_features
+
+#  train_test_split:
+#    cmd: python3 scripts/data_scripts/train_test_split.py data/stage_create_features/dataset.csv
+#    deps:
+#    - data/stage_create_features/dataset.csv
+#    - scripts/data_scripts/train_test_split.py
+#    params:
+#    - split.split_ratio
+#    outs:
+#    - data/stage_train_test_split
+
+#  train:
+#    cmd: python3 scripts/model_scripts/dt.py data/stage4/train.csv model.pkl
+#    deps:
+#    - data/stage4/train.csv
+#    - scripts/model_scripts/dt.py
+#    params:
+#    - train.max_depth
+#    - train.seed
+#    outs:
+#    - models/model.pkl
+#  evaluate:
+#    cmd: python3 scripts/model_scripts/evaluate.py data/stage4/test.csv models/model.pkl
+#    deps:
+#    - data/stage4/test.csv
+#    - models/model.pkl
+#    - scripts/model_scripts/evaluate.py
+#    metrics:
+#    - evaluate/score.json:
+#        cache: false
