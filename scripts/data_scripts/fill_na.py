@@ -12,12 +12,19 @@ def fill_na_in_dataset(source_dataset):
     """
     df = source_dataset.copy()
 
+    df = df.dropna(how='all')
+
+    df = df.drop_duplicates()
+    df = df.reset_index(drop=True)
+
+    mode_gender = df['Gender'].value_counts().idxmax()
+    mode_family_status = df['Family status'].value_counts().idxmax()
+
     df['Value'] = df['Value'].fillna('Нет стажа')
     df['JobStartDate'] = df['JobStartDate'].fillna(date.today())
-    df['gender'] = df['gender'].fillna(df.gender.mode())
-    df['Family status'] = df['Family status'].fillna(df['Family status'].mode())
+    df['Gender'] = df['Gender'].fillna(mode_gender)
+    df['Family status'] = df['Family status'].fillna(mode_family_status)
     df['ChildCount'] = df['ChildCount'].fillna(0)
-
 
     return df
 
