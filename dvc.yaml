@@ -8,14 +8,14 @@ stages:
       outs:
         - data/stage_fill_na
 
-#  data_prepare:
-#    cmd: python3 scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
-#    deps:
-#      - data/raw/SF_Mandarin_dataset_ver3_csv.csv
-#      - scripts/data_scripts/data_prepare.py
-#      - scripts/data_scripts/data_methods.py
-#    outs:
-#      - data/stage_data_prepare
+  data_prepare:
+    cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
+    deps:
+      - data/stage_fill_na/dataset.csv
+      - scripts/data_scripts/data_prepare.py
+      - scripts/data_scripts/data_methods.py
+    outs:
+      - data/stage_data_prepare
 
 #  fix_errors:
 #    cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
