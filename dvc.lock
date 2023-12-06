@@ -42,3 +42,24 @@ stages:
       md5: c8e194b0afb32a488e2283669383f84c.dir
       size: 2165575
       nfiles: 1
+  fix_errors:
+    cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
+    deps:
+    - path: data/stage_data_prepare/dataset.csv
+      hash: md5
+      md5: 2a7db178ad35c61efff6850ae0c0ae5f
+      size: 2165575
+    - path: scripts/data_scripts/data_methods.py
+      hash: md5
+      md5: 181ef718cd962746226f262f4d4fe2ea
+      size: 1549
+    - path: scripts/data_scripts/fix_errors.py
+      hash: md5
+      md5: ead66c92c38cab4e7bbbd416d035c290
+      size: 3595
+    outs:
+    - path: data/stage_fix_errors
+      hash: md5
+      md5: 9ec605a9490a89eb2815b72f76d4c358.dir
+      size: 2144482
+      nfiles: 1
