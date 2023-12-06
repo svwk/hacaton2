@@ -33,7 +33,7 @@ def create_stage(stage_name, function):
     filename_input = os.path.join(project_path, f_input)
     filename_output = os.path.join(stage_dir, "dataset.csv")
 
-    df = pd.read_csv(filename_input, sep=';')
+    df = pd.read_csv(filename_input, sep=';', parse_dates=['JobStartDate', 'BirthDate'])
     df = function(df)
 
     # Сохранение DataFrame в файл

@@ -26,7 +26,7 @@ def fix_errors_in_dataset(source_dataset):
 def fix_expense(application):
     """
     Исправление аномалий в столбце с тратами
-    :param application:  Строка датасета
+    :param application:  Данные заявки
     """
 
     real_expense = ADULT_LIVING_WAGE
@@ -43,34 +43,55 @@ def fix_expense(application):
     return application
 
 def check_family_status(status):
-  status = str(status)
+    """
+        Проверка семейного статуса, если замужем или женат вернуть True
+        :param status:  Данные из заявки
+    """
+    status = str(status)
 
-  if(status == 'Женат / замужем' or status == 'Гражданский брак / совместное проживание'):
-    return True
-  else:
-    return False
+    if(status == 'Женат / замужем' or status == 'Гражданский брак / совместное проживание'):
+        return True
+    else:
+        return False
 
 def fix_work_age(application):
     """
     Исправление аномалий в столбце со стажем работы
-    :param application:  Строка датасета
+    :param application:  Данные заявки
     """
 
+    #Общий стаж
     work_age = int(values_to_num(application['Value']))
+
+    #Возраст
     age = time_diff(application['BirthDate'])
 
+    #Стаж работы на последнем месте
     work_age_from_now_to_start_date = time_diff(application['JobStartDate'])
 
-    if(age < 20 and work_age < age / 2):
+    #Проверка на соотвествие трудовому зк
+    if(age < 16):
         application['Value'] = 'Нет стажа'
         return application
 
-    if(work_age < work_age_from_now_to_start_date):
-        work_age = work_age_from_now_to_start_date
-        application['Value'] = num_to_cat(work_age)
-        return application
+    #Стаж на последнем рабочем месте не может быть больше чем возраст - 16 (ЗК)
+    work_age_from_now_to_start_date = min(work_age_from_now_to_start_date, age - 16)
+    #Так же как и общий стаж
+    work_age = max(work_age, age - 16)
+
+    #Общий стаж не может быть меньше, чем стаж на последнем рабочем месте
+    work_age = min(work_age, work_age_from_now_to_start_date)
+
+    application['Value'] = num_to_cat(work_age)
+    return application
+
 
 def values_to_num(str_value):
+    """
+    Конвертация категориального значения стажа в числовой
+    :param str_value:  Данные из заявки
+    """
+
     str_value = str(str_value)
 
     if (str_value == 'Нет стажа'):
@@ -90,6 +111,10 @@ def values_to_num(str_value):
     return numeric_value
 
 def try_to_int(array_el):
+    """
+    Проверка строки на возможность конвертации в число
+    :param array_el:  Элемент массива
+    """
     try:
         converted = int(array_el)
         return True
@@ -97,6 +122,10 @@ def try_to_int(array_el):
         return False
 
 def num_to_cat(numeric_value):
+    """
+    Конвертация числового значения стажа в категориальный
+    :param str_value:  Данные из заявки
+    """
     if (numeric_value == 0):
         return 'Нет стажа'
     elif (numeric_value == 3):
@@ -129,16 +158,8 @@ def num_to_cat(numeric_value):
     elif (numeric_value >= 120):
         return '10 и более лет'
 
-def time_diff(str_date):
-  str_date = str(str_date)
-  date_only = str_date.split(' ')
-
-  if(len(date_only) > 1):
-    del date_only[1]
-
-  start = datetime.fromisoformat(str(date_only[0]))
-  from_now_to_start_job = datetime.now() - start
-
-  return int(from_now_to_start_job.days / 12)
+def time_diff(date):
+    from_now_to_start_job = datetime.now() - date
+    return int(from_now_to_start_job.days / 30)
 
 create_stage("fix_errors", fix_errors_in_dataset)
