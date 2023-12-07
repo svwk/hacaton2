@@ -8,23 +8,23 @@ stages:
       outs:
         - data/stage_fill_na
 
-  data_prepare:
-    cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
-    deps:
-      - data/stage_fill_na/dataset.csv
-      - scripts/data_scripts/data_prepare.py
-      - scripts/data_scripts/data_methods.py
-    outs:
-      - data/stage_data_prepare
-
-  fix_errors:
-    cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
-    deps:
-      - data/stage_data_prepare/dataset.csv
-      - scripts/data_scripts/fix_errors.py
-      - scripts/data_scripts/data_methods.py
-    outs:
-      - data/stage_fix_errors
+#  data_prepare:
+#    cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
+#    deps:
+#      - data/stage_fill_na/dataset.csv
+#      - scripts/data_scripts/data_prepare.py
+#      - scripts/data_scripts/data_methods.py
+#    outs:
+#      - data/stage_data_prepare
+#
+#  fix_errors:
+#    cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
+#    deps:
+#      - data/stage_data_prepare/dataset.csv
+#      - scripts/data_scripts/fix_errors.py
+#      - scripts/data_scripts/data_methods.py
+#    outs:
+#      - data/stage_fix_errors
 
 #  create_features:
 #    cmd: python3 scripts/data_scripts/create_features.py data/stage_fill_na/dataset.csv
