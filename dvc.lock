@@ -13,11 +13,32 @@ stages:
       size: 1538
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: 9cc92540bd0eaee028af6c1e771ab663
-      size: 879
+      md5: 163aa7e8ac3ab45162efa3bd050b36e5
+      size: 910
     outs:
     - path: data/stage_fill_na
       hash: md5
-      md5: 7a14a36b96a7b585a9bcb04c997824e1.dir
+      md5: f0e6e3d9547c3b3b81f7f90088e40c18.dir
       size: 2211795
+      nfiles: 1
+  data_prepare:
+    cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
+    deps:
+    - path: data/stage_fill_na/dataset.csv
+      hash: md5
+      md5: 6b3e34292a61f21c3ced84c7489ac2bd
+      size: 2211795
+    - path: scripts/data_scripts/data_methods.py
+      hash: md5
+      md5: eecad11fa517167b53b1509b3de4896e
+      size: 1538
+    - path: scripts/data_scripts/data_prepare.py
+      hash: md5
+      md5: afbb0c24de49a81cc0b5833eed1578ed
+      size: 764
+    outs:
+    - path: data/stage_data_prepare
+      hash: md5
+      md5: ed71fc1a53e6baa93202c014b647e718.dir
+      size: 2158971
       nfiles: 1
