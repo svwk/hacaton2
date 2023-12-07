@@ -1,0 +1,23 @@
+schema: '2.0'
+stages:
+  fill_na:
+    cmd: python scripts/data_scripts/fill_na.py data/raw/SF_Mandarin_dataset_ver3_csv.csv
+    deps:
+    - path: data/raw/SF_Mandarin_dataset_ver3_csv.csv
+      hash: md5
+      md5: 48f64e2a2591e91487493e86a0c0881b
+      size: 2263967
+    - path: scripts/data_scripts/data_methods.py
+      hash: md5
+      md5: eecad11fa517167b53b1509b3de4896e
+      size: 1538
+    - path: scripts/data_scripts/fill_na.py
+      hash: md5
+      md5: 9cc92540bd0eaee028af6c1e771ab663
+      size: 879
+    outs:
+    - path: data/stage_fill_na
+      hash: md5
+      md5: 7a14a36b96a7b585a9bcb04c997824e1.dir
+      size: 2211795
+      nfiles: 1
