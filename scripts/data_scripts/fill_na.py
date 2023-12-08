@@ -29,4 +29,5 @@ def fill_na_in_dataset(source_dataset):
     return df
 
 
-create_stage("fill_na", fill_na_in_dataset)
+if __name__ == "__main__":
+    create_stage("fill_na", fill_na_in_dataset)

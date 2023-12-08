@@ -13,6 +13,24 @@ def create_features_in_dataset(source_dataset):
     """
 
     df = source_dataset.copy()
+    df['Goods_category'] = df['Goods_category'].astype('category')
+    df['Merch_code'] = df['Merch_code'].astype('category')
+    df['Family status'] = df['Family status'].astype('category')
+    df['education'] = df['education'].astype('category')
+    df['employment status'] = df['employment status'].astype('category')
+    df['Value'] = df['Value'].astype('category')
+
+    df['BankA_decision'] = pd.Categorical(df['BankA_decision'], ordered=True)
+    df['BankB_decision'] = pd.Categorical(df['BankB_decision'], ordered=True)
+    df['BankC_decision'] = pd.Categorical(df['BankC_decision'], ordered=True)
+    df['BankD_decision'] = pd.Categorical(df['BankD_decision'], ordered=True)
+    df['BankE_decision'] = pd.Categorical(df['BankE_decision'], ordered=True)
+
+    df['BankA_decision'] = df['BankA_decision'].cat.codes
+    df['BankB_decision'] = df['BankB_decision'].cat.codes
+    df['BankC_decision'] = df['BankC_decision'].cat.codes
+    df['BankD_decision'] = df['BankD_decision'].cat.codes
+    df['BankE_decision'] = df['BankE_decision'].cat.codes
 
     education = pd.get_dummies(df['education'])
     value = pd.get_dummies(df['Value'])

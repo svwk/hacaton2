@@ -27,9 +27,9 @@ stages:
       - data/stage_fix_errors
 
 #  create_features:
-#    cmd: python3 scripts/data_scripts/create_features.py data/stage_fill_na/dataset.csv
+#    cmd: python3 scripts/data_scripts/create_features.py data/stage_fix_errors/dataset.csv
 #    deps:
-#    - data/stage_fill_na/dataset.csv
+#    - data/stage_fix_errors/dataset.csv
 #    - scripts/data_scripts/create_features.py
 #    - scripts/data_scripts/data_methods.py
 #    outs:
