@@ -2,3 +2,4 @@
 /stage_fill_na
 /stage_data_prepare
 /stage_fix_errors
+/stage_create_features
