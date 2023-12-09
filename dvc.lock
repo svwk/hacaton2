@@ -84,3 +84,24 @@ stages:
       md5: 814179f52c07bc60c784661448c6ed5b.dir
       size: 5550481
       nfiles: 1
+  train_test_split:
+    cmd: python scripts/data_scripts/train_test_split.py data/stage_create_features/dataset.csv
+    deps:
+    - path: data/stage_create_features/dataset.csv
+      hash: md5
+      md5: 74531624592e21c769d8151df9ced33c
+      size: 5550481
+    - path: scripts/data_scripts/train_test_split.py
+      hash: md5
+      md5: 27ef366e8fd550a312cf37928a32bf3f
+      size: 3536
+    params:
+      params.yaml:
+        split.bank_id: A
+        split.split_ratio: 0.3
+    outs:
+    - path: data/stage_train_test_split
+      hash: md5
+      md5: 5b9bcdca411c1bd33bade9badeb5e3af.dir
+      size: 5497162
+      nfiles: 2
