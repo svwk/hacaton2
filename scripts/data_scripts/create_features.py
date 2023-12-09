@@ -49,6 +49,23 @@ def create_features_in_dataset(source_dataset):
         axis=1
     )
 
+    # df = df.drop(columns=[
+    #     'education',
+    #     'Value',
+    #     'employment status',
+    #     'Family status',
+    #     'Loan_term',
+    #     'Goods_category',
+    #     'Merch_code'
+    # ])
+
+    df['Goods_category'] = df['Goods_category'].cat.codes
+    df['Merch_code'] = df['Merch_code'].cat.codes
+    df['Family status'] = df['Family status'].cat.codes
+    df['education'] = df['education'].cat.codes
+    df['employment status'] = df['employment status'].cat.codes
+    df['Value'] = df['Value'].cat.codes
+
     return df
 
 

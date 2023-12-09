@@ -1,5 +1,6 @@
 split:
   split_ratio: 0.3
+  bank_id:
 
 train:
   seed: 42
