@@ -13,55 +13,59 @@ stages:
       size: 1592
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: 63de7b8cf9b5758ff7372c192cb95139
-      size: 942
+      md5: 475a8bf6d953a11b4649c0f29e98458c
+      size: 986
     outs:
     - path: data/stage_fill_na
       hash: md5
-      md5: dd36b69e9a70083227f1c042e1794551.dir
-      size: 2218399
+      md5: 1f3f5192df1cc0d96c461b4727acd6cd.dir
+      size: 2112751
       nfiles: 1
   data_prepare:
     cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
     deps:
     - path: data/stage_fill_na/dataset.csv
       hash: md5
-      md5: c35407b5690de94de1cffafcc23cdc18
-      size: 2218399
+      md5: 923774e08e46aca2b0093c0c85006db6
+      size: 2112751
     - path: scripts/data_scripts/data_methods.py
       hash: md5
       md5: 8ec6bdcf3e55fc19cb5556686c70c0fb
       size: 1592
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: ceb48e3a3d716d67da118947da318f6a
-      size: 793
+      md5: 448f58539e64dd4f4c63bfa4ec52f815
+      size: 728
     outs:
     - path: data/stage_data_prepare
       hash: md5
-      md5: 09a28001477f67104ca86658103f0e11.dir
-      size: 2165575
+      md5: 336a26d46effa556dd3296191f6733fc.dir
+      size: 2073133
       nfiles: 1
   fix_errors:
     cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
     deps:
     - path: data/stage_data_prepare/dataset.csv
       hash: md5
-      md5: 54967ff7327bcb1a5d2783aaba98d218
-      size: 2165575
+      md5: 61cb191857c2330621282ac224ab297a
+      size: 2073133
     - path: scripts/data_scripts/data_methods.py
       hash: md5
       md5: 8ec6bdcf3e55fc19cb5556686c70c0fb
       size: 1592
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: 24860950addd87134427c969d4fb3114
-      size: 6997
+      md5: 7ff3fa6032103d5120dd4014e6928f5b
+      size: 5811
+    - path: scripts/data_scripts/utils/num_to_cat.py
+      hash: md5
+      md5: a30ef1748bc4b0d1440d54cfae51de55
+      size: 1268
     outs:
     - path: data/stage_fix_errors
       hash: md5
-      md5: 63deff84f898e516bcbc73548f6fa91d.dir
-      size: 2116352
+      md5: a6b7b648091d4379da0035b39065fc3d.dir
+      size: 2129875
       nfiles: 1
   create_features:
     cmd: python scripts/data_scripts/create_features.py data/stage_fix_errors/dataset.csv
@@ -93,15 +97,20 @@ stages:
       size: 5550481
     - path: scripts/data_scripts/train_test_split.py
       hash: md5
-      md5: 27ef366e8fd550a312cf37928a32bf3f
-      size: 3536
+      md5: cb7478ba6d949e336ef19d61b00ee029
+      size: 3564
     params:
       params.yaml:
-        split.bank_id: A
+        split.bank_id:
+        - A
+        - B
+        - C
+        - D
+        - E
         split.split_ratio: 0.3
     outs:
     - path: data/stage_train_test_split
       hash: md5
-      md5: 5b9bcdca411c1bd33bade9badeb5e3af.dir
-      size: 5497162
-      nfiles: 2
+      md5: 30a56fc48f052a8581e5e4c25e4345d6.dir
+      size: 27485810
+      nfiles: 10

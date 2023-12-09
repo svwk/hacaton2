@@ -23,6 +23,7 @@ stages:
       - data/stage_data_prepare/dataset.csv
       - scripts/data_scripts/fix_errors.py
       - scripts/data_scripts/data_methods.py
+      - scripts/data_scripts/utils/num_to_cat.py
     outs:
       - data/stage_fix_errors
 
@@ -32,6 +33,7 @@ stages:
     - data/stage_fix_errors/dataset.csv
     - scripts/data_scripts/create_features.py
     - scripts/data_scripts/data_methods.py
+    - scripts/data_scripts/utils/num_to_cat.py
     outs:
     - data/stage_create_features
 

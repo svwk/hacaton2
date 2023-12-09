@@ -6,6 +6,14 @@ from data_methods import create_stage
 import pandas as pd
 import numpy as np
 
+from data_prepare import prepare_dataset
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
+from utils.num_to_cat import num_to_cat
+
+f_input = 'G:\DEV\ML\hacaton2\data\stage_fix_errors\dataset.csv'
+dataset = pd.read_csv(f_input, sep=';', parse_dates=['JobStartDate', 'BirthDate'])
 def create_features_in_dataset(source_dataset):
     """
     Создание новых признаков и удаление ненужных
@@ -13,6 +21,8 @@ def create_features_in_dataset(source_dataset):
     """
 
     df = source_dataset.copy()
+
+    df = prepare_dataset(df)
     df['Goods_category'] = df['Goods_category'].astype('category')
     df['Merch_code'] = df['Merch_code'].astype('category')
     df['Family status'] = df['Family status'].astype('category')
@@ -44,6 +54,13 @@ def create_features_in_dataset(source_dataset):
     df['Credit_load'] = np.where(df['Credit_load'] < 0, 0, df['Credit_load'])
     df['is_loanable'] = np.where(df['Credit_load'] > 1.25, 1, 0)
 
+    age = relativedelta(datetime.today(), df['BirthDate']).years
+
+    # Стаж работы на последнем месте в месяцах
+    last_seniority = relativedelta(datetime.today(), df['JobStartDate'])
+    last_seniority = last_seniority.months + last_seniority.years * 12
+    df['last_seniority'] = num_to_cat(last_seniority)
+
     df = pd.concat(
         [df, value, education, employment_status, family_status, loan_term, goods_category, merch_code],
         axis=1
@@ -65,8 +82,14 @@ def create_features_in_dataset(source_dataset):
     df['education'] = df['education'].cat.codes
     df['employment status'] = df['employment status'].cat.codes
     df['Value'] = df['Value'].cat.codes
+    df['Loan_term'] = df['Loan_term'].cat.codes
+
+    df = df.drop(columns=['SkillFactory_Id', 'Position'])
+    df = df.drop(columns=['BirthDate', 'JobStartDate'])
 
     return df
 
 
-create_stage("create_features", create_features_in_dataset)
+create_features_in_dataset(dataset)
+if __name__ == "__main__":
+    create_stage("create_features", create_features_in_dataset)

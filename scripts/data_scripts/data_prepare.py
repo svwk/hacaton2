@@ -15,7 +15,6 @@ def prepare_dataset(source_dataset):
 
     df = source_dataset.copy()
 
-    df['SkillFactory_Id'] = df['SkillFactory_Id'].astype('int')
     df['BirthDate'] = pd.to_datetime(df['BirthDate'])
     df['JobStartDate'] = pd.to_datetime(df['JobStartDate'])
     df['Gender'] = np.where(df['Gender'] > 0, 1, 0)

@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from data_methods import create_stage
-from datetime import datetime
+from datetime import datetime, date
 
 
 def fill_na_in_dataset(source_dataset):
@@ -21,7 +21,7 @@ def fill_na_in_dataset(source_dataset):
     mode_family_status = df['Family status'].value_counts().idxmax()
 
     df['Value'] = df['Value'].fillna('Нет стажа')
-    df['JobStartDate'] = df['JobStartDate'].fillna(datetime.now())
+    df['JobStartDate'] = df['JobStartDate'].fillna(datetime.strftime(date.today(), "%Y-%m-%d %H:%M:%S"))
     df['Gender'] = df['Gender'].fillna(mode_gender)
     df['Family status'] = df['Family status'].fillna(mode_family_status)
     df['ChildCount'] = df['ChildCount'].fillna(0)

@@ -59,9 +59,9 @@ def separate_bank_dataset(source_dataset, p_split_ratio, bank_id, random_state=4
 stage_name = "train_test_split"
 params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))["split"]
 p_split_ratio = params["split_ratio"]
-bank_id = params["bank_id"]
+bank_id_list = params["bank_id"]
 print(p_split_ratio)
-print(bank_id)
+print(bank_id_list)
 
 if len(sys.argv) != 2:
     sys.stderr.write("Arguments error. Usage:\n")
@@ -78,17 +78,19 @@ filename_input = os.path.join(project_path, f_input)
 
 df = pd.read_csv(filename_input, sep=';')
 print(f'Строк - {df.shape[0]}')
-if bank_id:
-    df_train, df_test = separate_bank_dataset(df, p_split_ratio, bank_id)
-    train_filename_output = os.path.join(stage_dir, "train_"+bank_id+".csv")
-    test_filename_output = os.path.join(stage_dir, "test_"+bank_id+".csv")
-else:
-    df_train, df_test = separate_dataset(df, p_split_ratio)
-    train_filename_output = os.path.join(stage_dir, "train.csv")
-    test_filename_output = os.path.join(stage_dir, "test.csv")
 
 # Сохранение DataFrame в файл
 os.makedirs(stage_dir, exist_ok=True)
-df_train.to_csv(train_filename_output, index=False, sep=';')
-df_test.to_csv(test_filename_output, index=False, sep=';')
+
+for bank_id in bank_id_list:
+    df_train, df_test = separate_bank_dataset(df, p_split_ratio, bank_id)
+    train_filename_output = os.path.join(stage_dir, "train_"+bank_id+".csv")
+    test_filename_output = os.path.join(stage_dir, "test_"+bank_id+".csv")
+    df_train.to_csv(train_filename_output, index=False, sep=';')
+    df_test.to_csv(test_filename_output, index=False, sep=';')
+
+# df_train, df_test = separate_dataset(df, p_split_ratio)
+# train_filename_output = os.path.join(stage_dir, "train.csv")
+# test_filename_output = os.path.join(stage_dir, "test.csv")
+
 

@@ -6,6 +6,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from data_prepare import prepare_dataset
+from utils.num_to_cat import num_to_cat
 
 # Прожиточный минимум
 ADULT_LIVING_WAGE = 15669
@@ -101,12 +102,12 @@ def fix_seniority(application_data):
     # чем максимально возможный трудовой стаж
     new_total_seniority = min(total_seniority_in_months, max_seniority_in_months)
 
-    # Общий стаж не может быть меньше, чем стаж на последнем рабочем месте
+    # Общий стаж не может быть меньше, чем стаж на последнем рабочем  месте
     new_total_seniority = max(new_total_seniority, new_last_seniority)
 
     if new_last_seniority != last_seniority_in_months:
-        application_data['JobStartDate'] = (date.today() -
-                                            relativedelta(months=new_last_seniority))
+        application_data['JobStartDate'] = datetime.strftime((date.today() -
+                                            relativedelta(months=new_last_seniority)), "%Y-%m-%d %H:%M:%S")
 
     if new_total_seniority != total_seniority_in_months:
         application_data['Value'] = num_to_cat(new_total_seniority)
@@ -138,44 +139,6 @@ def values_to_num(str_value):
     numeric_value = min([int(y) for y in numeric_filtered_array]) * 12
     return numeric_value
 
-
-def num_to_cat(numeric_value):
-    """
-    Конвертация числового значения стажа в категориальный
-    :param numeric_value:
-    :param str_value:  Данные из заявки
-    """
-    if numeric_value == 0:
-        return 'Нет стажа'
-    elif numeric_value == 3:
-        return 'Нет стажа'
-    elif numeric_value == 4:
-        return '4 - 6 месяцев'
-    elif numeric_value == 6:
-        return '6 месяцев'
-    elif numeric_value == 9:
-        return '6 месяцев - 1 год'
-
-    if 12 <= numeric_value < 24:
-        return '1 - 2 года'
-    elif 24 <= numeric_value < 36:
-        return '2 - 3 года'
-    elif 36 <= numeric_value < 48:
-        return '3 - 4 года'
-    elif 48 <= numeric_value < 60:
-        return '4 - 5 лет'
-    elif 60 <= numeric_value < 72:
-        return '5 - 6 лет'
-    elif 72 <= numeric_value < 84:
-        return '6 - 7 лет'
-    elif 84 <= numeric_value < 96:
-        return '7 - 8 лет'
-    elif 96 <= numeric_value < 108:
-        return '8 - 9 лет'
-    elif 108 <= numeric_value < 120:
-        return '9 - 10 лет'
-    elif numeric_value >= 120:
-        return '10 и более лет'
 
 
 def time_diff(date_value):
