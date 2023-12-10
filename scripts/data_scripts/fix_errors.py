@@ -9,6 +9,7 @@ from dateutil.relativedelta import relativedelta
 
 from data_prepare import prepare_dataset
 from utils.seniority_cats import months_seniority_to_cat, seniority_cat_to_month_count
+from utils.seniority_cats import set_last_seniority
 
 # Прожиточный минимум
 ADULT_LIVING_WAGE = 15669
@@ -98,10 +99,11 @@ def fix_seniority(application_data):
     # Стаж работы на последнем месте
     if (not pd.isna(application_data['JobStartDate']) and
             application_data['employment status'] != "Не работаю"):
-
-        last_seniority = relativedelta(datetime.today(), application_data['JobStartDate'])
         # Стаж работы на последнем месте в месяцах
-        last_seniority_in_months = last_seniority.months + last_seniority.years * 12
+        last_seniority_in_months = set_last_seniority(application_data)
+        #     relativedelta(datetime.today(), application_data['JobStartDate'])
+        # # Стаж работы на последнем месте в месяцах
+        # last_seniority_in_months = last_seniority.months + last_seniority.years * 12
 
         # Стаж на последнем рабочем месте не может быть больше,
         # чем максимально возможный трудовой стаж

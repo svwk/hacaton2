@@ -1,3 +1,7 @@
+import pandas as pd
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
+
 DEFAULT_CAT = 'Нет стажа'
 
 seniority_values = {
@@ -88,3 +92,12 @@ def seniority_cat_to_month_count(str_value):
     # numeric_filtered_array = list(filter(lambda x: x.isdigit(), words_array))
     # numeric_value = min([int(y) for y in numeric_filtered_array]) * 12
     # return numeric_value
+
+
+def set_last_seniority(application_data):
+    if not pd.isna(application_data['JobStartDate']):
+        last_seniority = relativedelta(datetime.today(), application_data['JobStartDate'])
+        # Стаж работы на последнем месте в месяцах
+        return last_seniority.months + last_seniority.years * 12
+
+    return None

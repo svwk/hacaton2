@@ -20,6 +20,8 @@ def prepare_dataset(source_dataset):
     df['Gender'] = np.where(df['Gender'] > 0, 1, 0)
     df['ChildCount'] = df['ChildCount'].fillna(0).astype('int')
     df['SNILS'] = df['SNILS'].fillna(0).astype('int')
+    df['Loan_amount'] = df['Loan_amount'].astype('int')
+    df['Loan_term'] = df['Loan_term'].astype('int')
 
     return df
 
