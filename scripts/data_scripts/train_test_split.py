@@ -10,37 +10,17 @@ from sklearn.model_selection import train_test_split
 from data_methods import project_path
 
 
-def separate_dataset(source_dataset, p_split_ratio, random_state=42):
+def separate_bank_dataset(source_dataset, p_split_ratio, bank_id, random_state=42):
     """
-     Разделение на обучающую и тестовую выборки
+     Разделение на обучающую и тестовую выборки для каждого банка по отдельности
     :param p_split_ratio: Отношение для разделения
     :param source_dataset: Исходный датасет
+    :param bank_id: идентификатор банка
     :param random_state: фиксированный сид случайных чисел (для повторяемости)
     :return: Два дата-фрейма с обучающими и тестовыми данными
     """
-
-    target_columns = ["BankA_decision", "BankB_decision", "BankC_decision", "BankD_decision", "BankE_decision"]
-
-    X = source_dataset.drop(target_columns, axis=1)
-    y = source_dataset[target_columns]
-
-    print(y)
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=p_split_ratio, random_state=random_state,
-                                                        stratify=y)
-
-    df_train = pd.concat([X_train, y_train], axis=1)
-    df_test = pd.concat([X_test, y_test], axis=1)
-
-    return df_train, df_test
-
-def separate_bank_dataset(source_dataset, p_split_ratio, bank_id, random_state=42):
-    """
-    Начальная подготовка датасета
-    :param source_dataset:  Исходный датасет
-    """
-    target_column = "Bank"+bank_id+"_decision"
-    bank_columns = ["BankA_decision", "BankB_decision", "BankC_decision", "BankD_decision", "BankE_decision"]
+    target_column = "решение банка "+bank_id
+    bank_columns = ["решение банка A", "решение банка B", "решение банка C", "решение банка D", "решение банка E"]
 
     source_dataset = source_dataset[source_dataset[target_column] != 'error']
 
@@ -58,10 +38,8 @@ def separate_bank_dataset(source_dataset, p_split_ratio, bank_id, random_state=4
 
 stage_name = "train_test_split"
 params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))["split"]
-p_split_ratio = params["split_ratio"]
-bank_id_list = params["bank_id"]
-print(p_split_ratio)
-print(bank_id_list)
+split_ratio = params["split_ratio"]
+bank_id_list = params["bank_id_list"]
 
 if len(sys.argv) != 2:
     sys.stderr.write("Arguments error. Usage:\n")
@@ -82,15 +60,9 @@ print(f'Строк - {df.shape[0]}')
 # Сохранение DataFrame в файл
 os.makedirs(stage_dir, exist_ok=True)
 
-for bank_id in bank_id_list:
-    df_train, df_test = separate_bank_dataset(df, p_split_ratio, bank_id)
-    train_filename_output = os.path.join(stage_dir, "train_"+bank_id+".csv")
-    test_filename_output = os.path.join(stage_dir, "test_"+bank_id+".csv")
+for bank in bank_id_list:
+    df_train, df_test = separate_bank_dataset(df, split_ratio, bank)
+    train_filename_output = os.path.join(stage_dir, "train_" + bank + ".csv")
+    test_filename_output = os.path.join(stage_dir, "test_" + bank + ".csv")
     df_train.to_csv(train_filename_output, index=False, sep=';')
     df_test.to_csv(test_filename_output, index=False, sep=';')
-
-# df_train, df_test = separate_dataset(df, p_split_ratio)
-# train_filename_output = os.path.join(stage_dir, "train.csv")
-# test_filename_output = os.path.join(stage_dir, "test.csv")
-
-
