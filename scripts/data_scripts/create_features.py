@@ -60,7 +60,7 @@ def create_features_in_dataset(source_dataset):
     # Стаж работы на последнем месте в месяцах
 
     last_seniority = df.apply(set_last_seniority_cat, axis=1)
-    df['last_seniority'] = last_seniority.astype('category')
+    df['стаж работы на последнем месте'] = last_seniority.astype('category')
 
     df = pd.concat(
         [df, value, education, employment_status, family_status, loan_term, goods_category, merch_code],
