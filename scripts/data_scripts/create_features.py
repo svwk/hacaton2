@@ -8,8 +8,6 @@ import numpy as np
 from data_prepare import prepare_dataset
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
-
 from utils.seniority_cats import set_last_seniority_cat
 
 
@@ -23,12 +21,14 @@ def create_features_in_dataset(source_dataset):
 
     df = prepare_dataset(df)
     df['is_not_working'] = pd.isna(df['JobStartDate']) | df['employment status'] == "Не работаю"
-    df['Goods_category'] = df['Goods_category'].astype('category')
-    df['Merch_code'] = df['Merch_code'].astype('category')
-    df['Family status'] = df['Family status'].astype('category')
-    df['education'] = df['education'].astype('category')
-    df['employment status'] = df['employment status'].astype('category')
-    df['Value'] = df['Value'].astype('category')
+    df['is_not_working'] = df['is_not_working'].astype('int')
+
+    df['Goods_category'] = pd.Categorical(df['Goods_category'], ordered=True)
+    df['Merch_code'] = pd.Categorical(df['Merch_code'], ordered=True)
+    df['Family status'] = pd.Categorical(df['Family status'], ordered=True)
+    df['education'] = pd.Categorical(df['education'], ordered=True)
+    df['employment status'] = pd.Categorical(df['employment status'], ordered=True)
+    df['Value'] = pd.Categorical(df['Value'], ordered=True)
 
     df['BankA_decision'] = pd.Categorical(df['BankA_decision'], ordered=True)
     df['BankB_decision'] = pd.Categorical(df['BankB_decision'], ordered=True)
@@ -60,7 +60,7 @@ def create_features_in_dataset(source_dataset):
     # Стаж работы на последнем месте в месяцах
 
     last_seniority = df.apply(set_last_seniority_cat, axis=1)
-    df['стаж работы на последнем месте'] = last_seniority.astype('category')
+    df['стаж работы на последнем месте'] = pd.Categorical(last_seniority, ordered=True)
 
     df = pd.concat(
         [df, value, education, employment_status, family_status, loan_term, goods_category, merch_code],
@@ -83,14 +83,12 @@ def create_features_in_dataset(source_dataset):
     df['education'] = df['education'].cat.codes
     df['employment status'] = df['employment status'].cat.codes
     df['Value'] = df['Value'].cat.codes
-    df['Loan_term'] = df['Loan_term'].astype('category').cat.codes
+    df['Loan_term'] = pd.Categorical(df['Loan_term'], ordered=True)
+    df['Loan_term'] = df['Loan_term'].cat.codes
 
-    df = df.drop(columns=['SkillFactory_Id', 'Position'])
-    df = df.drop(columns=['BirthDate', 'JobStartDate'])
+    df = df.drop(columns=['SkillFactory_Id', 'Position', 'BirthDate', 'JobStartDate'])
 
     df = df.rename(columns={
-        'BirthDate': 'дата рождения',
-        'JobStartDate': 'дата начала работы на последнем месте',
         'MonthProfit': 'ежемесячный доход',
         'MonthExpense': 'ежемесячный расход',
         'Gender': 'пол',
@@ -104,6 +102,7 @@ def create_features_in_dataset(source_dataset):
         'Value': 'стаж работы',
         'Loan_term': 'срок кредита',
         'Loan_amount': 'сумма заказа',
+        'is_not_working': 'не работает',
         'BankA_decision': 'решение банка A',
         'BankB_decision': 'решение банка B',
         'BankC_decision': 'решение банка C',
