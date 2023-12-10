@@ -8,9 +8,9 @@ import numpy as np
 from data_prepare import prepare_dataset
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from sklearn. preprocessing import OneHotEncoder
 
-from utils.seniority_cats import months_seniority_to_cat, set_last_seniority
+
+from utils.seniority_cats import set_last_seniority_cat
 
 
 # f_input = 'G:\DEV\ML\hacaton2\data\stage_fix_errors\dataset.csv'
@@ -24,6 +24,7 @@ def create_features_in_dataset(source_dataset):
     df = source_dataset.copy()
 
     df = prepare_dataset(df)
+    df['is_not_working'] = pd.isna(df['JobStartDate']) | df['employment status'] == "Не работаю"
     df['Goods_category'] = df['Goods_category'].astype('category')
     df['Merch_code'] = df['Merch_code'].astype('category')
     df['Family status'] = df['Family status'].astype('category')
@@ -44,8 +45,6 @@ def create_features_in_dataset(source_dataset):
     df['BankD_decision'] = df['BankD_decision'].cat.codes
     df['BankE_decision'] = df['BankE_decision'].cat.codes
 
-    # education_encoder = OneHotEncoder(handle_unknown='ignore')
-    # encoder_df = pd.DataFrame(education_encoder.fit_transform(df[['education']]).toarray())
     education = pd.get_dummies(df['education'], prefix="образование_")
     value = pd.get_dummies(df['Value'])
     employment_status = pd.get_dummies(df['employment status'])
@@ -59,15 +58,15 @@ def create_features_in_dataset(source_dataset):
     df['Credit_load'] = np.where(df['Credit_load'] < 0, 0, df['Credit_load'])
     df['is_loanable'] = np.where(df['Credit_load'] > 1.25, 1, 0)
 
-    # df['lage'] = relativedelta(datetime.today(), df['BirthDate']).years
-
-    df['lage'] = df['BirthDate'].apply(lambda r: relativedelta(datetime.today(), r).years)
+    df['age'] = df['BirthDate'].apply(lambda r: relativedelta(datetime.today(), r).years)
 
     # Стаж работы на последнем месте в месяцах
-    # last_seniority = df.apply(months_seniority_to_cat(set_last_seniority))
-    # df['last_seniority'] = last_seniority.astype('category')
 
-    # df['is_not_working'] = df[pd.isna(df['JobStartDate']) | df['employment status'] == "Не работаю"]
+    last_seniority = df.apply(set_last_seniority_cat, axis=1)
+    # last_seniority = last_seniority.apply(months_seniority_to_cat)
+    df['last_seniority'] = last_seniority.astype('category')
+
+
 
     df = pd.concat(
         [df, value, education, employment_status, family_status, loan_term, goods_category, merch_code],
