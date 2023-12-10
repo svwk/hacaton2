@@ -10,7 +10,7 @@ from data_prepare import prepare_dataset
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from utils.num_to_cat import num_to_cat
+from utils.seniority_cats import months_seniority_to_cat
 
 f_input = 'G:\DEV\ML\hacaton2\data\stage_fix_errors\dataset.csv'
 dataset = pd.read_csv(f_input, sep=';', parse_dates=['JobStartDate', 'BirthDate'])
@@ -59,7 +59,7 @@ def create_features_in_dataset(source_dataset):
     # Стаж работы на последнем месте в месяцах
     last_seniority = relativedelta(datetime.today(), df['JobStartDate'])
     last_seniority = last_seniority.months + last_seniority.years * 12
-    df['last_seniority'] = num_to_cat(last_seniority)
+    df['last_seniority'] = months_seniority_to_cat(last_seniority)
 
     df = pd.concat(
         [df, value, education, employment_status, family_status, loan_term, goods_category, merch_code],
