@@ -20,8 +20,8 @@ def create_features_in_dataset(source_dataset):
     df = source_dataset.copy()
 
     df = prepare_dataset(df)
-    df['is_not_working'] = pd.isna(df['JobStartDate']) | df['employment status'] == "Не работаю"
-    df['is_not_working'] = df['is_not_working'].astype('int')
+    df['is_working'] = ((pd.notna(df['JobStartDate'])) & (df['employment status'] != "Не работаю"))
+    df['is_working'] = df['is_working'].astype('int')
 
     df['Goods_category'] = pd.Categorical(df['Goods_category'], ordered=True)
     df['Merch_code'] = pd.Categorical(df['Merch_code'], ordered=True)
@@ -77,16 +77,18 @@ def create_features_in_dataset(source_dataset):
     #     'Merch_code'
     # ])
 
-    df['Goods_category'] = df['Goods_category'].cat.codes
-    df['Merch_code'] = df['Merch_code'].cat.codes
-    df['Family status'] = df['Family status'].cat.codes
-    df['education'] = df['education'].cat.codes
-    df['employment status'] = df['employment status'].cat.codes
-    df['Value'] = df['Value'].cat.codes
+
     df['Loan_term'] = pd.Categorical(df['Loan_term'], ordered=True)
-    df['Loan_term'] = df['Loan_term'].cat.codes
 
     df = df.drop(columns=['SkillFactory_Id', 'Position', 'BirthDate', 'JobStartDate'])
+
+    df['срок кредита код'] = df['Loan_term'].cat.codes
+    df['категория товара код'] = df['Goods_category'].cat.codes
+    df['код магазина код'] = df['Merch_code'].cat.codes
+    df['семейное положение код'] = df['Family status'].cat.codes
+    df['образование код'] = df['education'].cat.codes
+    df['тип занятости код'] = df['employment status'].cat.codes
+    df['стаж работы код'] = df['Value'].cat.codes
 
     df = df.rename(columns={
         'MonthProfit': 'ежемесячный доход',
@@ -102,7 +104,7 @@ def create_features_in_dataset(source_dataset):
         'Value': 'стаж работы',
         'Loan_term': 'срок кредита',
         'Loan_amount': 'сумма заказа',
-        'is_not_working': 'не работает',
+        'is_working': 'имеет доход',
         'BankA_decision': 'решение банка A',
         'BankB_decision': 'решение банка B',
         'BankC_decision': 'решение банка C',
