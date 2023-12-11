@@ -45,22 +45,317 @@ stages:
 #    outs:
 #    - data/stage_train_test_split
 
-#  train:
-#    cmd: python3 scripts/model_scripts/dt.py data/stage4/train.csv model.pkl
-#    deps:
-#    - data/stage4/train.csv
-#    - scripts/model_scripts/dt.py
-#    params:
-#    - train.max_depth
-#    - train.seed
-#    outs:
-#    - models/model.pkl
-#  evaluate:
-#    cmd: python3 scripts/model_scripts/evaluate.py data/stage4/test.csv models/model.pkl
-#    deps:
-#    - data/stage4/test.csv
-#    - models/model.pkl
-#    - scripts/model_scripts/evaluate.py
-#    metrics:
-#    - evaluate/score.json:
-#        cache: false
+  train_dec_tree_for_A:
+    cmd: python scripts/model_scripts/dt.py data/stage_train_test_split/train_A.csv model_tree_A.pkl A
+    deps:
+    - data/stage_train_test_split/train_A.csv
+    - scripts/model_scripts/dt.py
+    params:
+    - tree.max_depth
+    - tree.seed
+    outs:
+    - models/model_tree_A.pkl
+
+  evaluate_dec_tree_for_A:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_A.csv models/model_tree_A.pkl score_dec_tree_A.json A
+    deps:
+    - data/stage_train_test_split/test_A.csv
+    - models/model_tree_A.pkl
+    - scripts/model_scripts/evaluate.py
+    metrics:
+    - evaluate/score_dec_tree_A.json:
+        cache: false
+
+  train_log_reg_for_A:
+    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_A.csv model_reg_A.pkl A
+    deps:
+      - data/stage_train_test_split/train_A.csv
+      - scripts/model_scripts/logistic_regression.py
+    params:
+      - log_reg.max_depth
+      - log_reg.seed
+    outs:
+      - models/model_reg_A.pkl
+
+  evaluate_log_reg_for_A:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_A.csv models/model_reg_A.pkl score_reg_A.json A
+    deps:
+      - data/stage_train_test_split/test_A.csv
+      - models/model_reg_A.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_reg_a.json:
+          cache: false
+
+  train_net_for_A:
+    cmd: python scripts/model_scripts/neural_network.py data/stage_train_test_split/train_A.csv model_net_A.pkl A
+    deps:
+      - data/stage_train_test_split/train_A.csv
+      - scripts/model_scripts/neural_network.py
+    params:
+      - neural.max_depth
+      - neural.seed
+    outs:
+      - models/model_net_A.pkl
+
+  evaluate_net_for_A:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_A.csv models/model_net_A.pkl score_net_A.json A
+    deps:
+      - data/stage_train_test_split/test_A.csv
+      - models/model_net_A.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_net_A.json:
+          cache: false
+
+  train_dec_tree_for_B:
+    cmd: python scripts/model_scripts/dt.py data/stage_train_test_split/train_B.csv model_tree_B.pkl B
+    deps:
+      - data/stage_train_test_split/train_B.csv
+      - scripts/model_scripts/dt.py
+    params:
+      - tree.max_depth
+      - tree.seed
+    outs:
+      - models/model_tree_B.pkl
+
+  evaluate_dec_tree_for_B:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_B.csv models/model_tree_B.pkl score_dec_tree_B.json B
+    deps:
+      - data/stage_train_test_split/test_B.csv
+      - models/model_tree_B.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_dec_tree_B.json:
+          cache: false
+
+  train_log_reg_for_B:
+    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_B.csv model_reg_B.pkl B
+    deps:
+      - data/stage_train_test_split/train_B.csv
+      - scripts/model_scripts/logistic_regression.py
+    params:
+      - log_reg.max_depth
+      - log_reg.seed
+    outs:
+      - models/model_reg_B.pkl
+
+  evaluate_log_reg_for_B:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_B.csv models/model_reg_B.pkl score_reg_B.json B
+    deps:
+      - data/stage_train_test_split/test_B.csv
+      - models/model_reg_B.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_reg_B.json:
+          cache: false
+
+  train_net_for_B:
+    cmd: python scripts/model_scripts/neural_network.py data/stage_train_test_split/train_B.csv model_net_B.pkl B
+    deps:
+      - data/stage_train_test_split/train_B.csv
+      - scripts/model_scripts/neural_network.py
+    params:
+      - neural.max_depth
+      - neural.seed
+    outs:
+      - models/model_net_B.pkl
+
+  evaluate_net_for_B:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_B.csv models/model_net_B.pkl score_net_B.json B
+    deps:
+      - data/stage_train_test_split/test_B.csv
+      - models/model_net_B.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_net_B.json:
+          cache: false
+
+  train_dec_tree_for_C:
+    cmd: python scripts/model_scripts/dt.py data/stage_train_test_split/train_C.csv model_tree_C.pkl C
+    deps:
+      - data/stage_train_test_split/train_C.csv
+      - scripts/model_scripts/dt.py
+    params:
+      - tree.max_depth
+      - tree.seed
+    outs:
+      - models/model_tree_C.pkl
+
+  evaluate_dec_tree_for_C:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_C.csv models/model_tree_C.pkl score_dec_tree_C.json C
+    deps:
+      - data/stage_train_test_split/test_C.csv
+      - models/model_tree_C.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_dec_tree_C.json:
+          cache: false
+
+  train_log_reg_for_C:
+    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_C.csv model_reg_C.pkl C
+    deps:
+      - data/stage_train_test_split/train_C.csv
+      - scripts/model_scripts/logistic_regression.py
+    params:
+      - log_reg.max_depth
+      - log_reg.seed
+    outs:
+      - models/model_reg_C.pkl
+
+  evaluate_log_reg_for_C:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_C.csv models/model_reg_C.pkl score_reg_C.json C
+    deps:
+      - data/stage_train_test_split/test_C.csv
+      - models/model_reg_C.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_reg_C.json:
+          cache: false
+
+  train_net_for_C:
+    cmd: python scripts/model_scripts/neural_network.py data/stage_train_test_split/train_C.csv model_net_C.pkl C
+    deps:
+      - data/stage_train_test_split/train_C.csv
+      - scripts/model_scripts/neural_network.py
+    params:
+      - neural.max_depth
+      - neural.seed
+    outs:
+      - models/model_net_C.pkl
+
+  evaluate_net_for_C:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_C.csv models/model_net_C.pkl score_net_C.json C
+    deps:
+      - data/stage_train_test_split/test_C.csv
+      - models/model_net_C.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_net_C.json:
+          cache: false
+
+  train_dec_tree_for_D:
+    cmd: python scripts/model_scripts/dt.py data/stage_train_test_split/train_D.csv model_tree_D.pkl D
+    deps:
+      - data/stage_train_test_split/train_D.csv
+      - scripts/model_scripts/dt.py
+    params:
+      - tree.max_depth
+      - tree.seed
+    outs:
+      - models/model_tree_D.pkl
+
+  evaluate_dec_tree_for_D:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_D.csv models/model_tree_D.pkl score_dec_tree_D.json D
+    deps:
+      - data/stage_train_test_split/test_D.csv
+      - models/model_tree_D.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_dec_tree_D.json:
+          cache: false
+
+  train_log_reg_for_D:
+    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_D.csv model_reg_D.pkl D
+    deps:
+      - data/stage_train_test_split/train_D.csv
+      - scripts/model_scripts/logistic_regression.py
+    params:
+      - log_reg.max_depth
+      - log_reg.seed
+    outs:
+      - models/model_reg_D.pkl
+
+  evaluate_log_reg_for_D:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_D.csv models/model_reg_D.pkl score_reg_D.json D
+    deps:
+      - data/stage_train_test_split/test_D.csv
+      - models/model_reg_D.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_reg_D.json:
+          cache: false
+
+  train_net_for_D:
+    cmd: python scripts/model_scripts/neural_network.py data/stage_train_test_split/train_D.csv model_net_D.pkl D
+    deps:
+      - data/stage_train_test_split/train_D.csv
+      - scripts/model_scripts/neural_network.py
+    params:
+      - neural.max_depth
+      - neural.seed
+    outs:
+      - models/model_net_D.pkl
+
+  evaluate_net_for_D:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_D.csv models/model_net_D.pkl score_net_D.json D
+    deps:
+      - data/stage_train_test_split/test_D.csv
+      - models/model_net_D.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_net_D.json:
+          cache: false
+
+  train_dec_tree_for_E:
+    cmd: python scripts/model_scripts/dt.py data/stage_train_test_split/train_E.csv model_tree_E.pkl E
+    deps:
+      - data/stage_train_test_split/train_E.csv
+      - scripts/model_scripts/dt.py
+    params:
+      - tree.max_depth
+      - tree.seed
+    outs:
+      - models/model_tree_E.pkl
+
+  evaluate_dec_tree_for_E:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_E.csv models/model_tree_E.pkl score_dec_tree_E.json E
+    deps:
+      - data/stage_train_test_split/test_E.csv
+      - models/model_tree_E.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_dec_tree_E.json:
+          cache: false
+
+  train_log_reg_for_E:
+    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_E.csv model_reg_E.pkl E
+    deps:
+      - data/stage_train_test_split/train_E.csv
+      - scripts/model_scripts/logistic_regression.py
+    params:
+      - log_reg.max_depth
+      - log_reg.seed
+    outs:
+      - models/model_reg_E.pkl
+
+  evaluate_log_reg_for_E:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_E.csv models/model_reg_E.pkl score_reg_E.json E
+    deps:
+      - data/stage_train_test_split/test_E.csv
+      - models/model_reg_E.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_reg_E.json:
+          cache: false
+
+  train_net_for_E:
+    cmd: python scripts/model_scripts/neural_network.py data/stage_train_test_split/train_E.csv model_net_E.pkl E
+    deps:
+      - data/stage_train_test_split/train_E.csv
+      - scripts/model_scripts/neural_network.py
+    params:
+      - neural.max_depth
+      - neural.seed
+    outs:
+      - models/model_net_E.pkl
+
+  evaluate_net_for_E:
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_E.csv models/model_net_E.pkl score_net_E.json E
+    deps:
+      - data/stage_train_test_split/test_E.csv
+      - models/model_net_E.pkl
+      - scripts/model_scripts/evaluate.py
+    metrics:
+      - evaluate/score_net_E.json:
+          cache: false
