@@ -7,7 +7,11 @@ import yaml
 import pickle
 
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
+import numpy as np
+
+from sklearn.neural_network import MLPClassifier
+from imblearn.under_sampling import NearMiss
+
 
 train_data = pd.read_csv(sys.argv[1], sep=';')
 
@@ -22,15 +26,24 @@ X_train = X_train.drop('категория товара', axis=1)
 X_train = X_train.drop('стаж работы на последнем месте', axis=1)
 y_train = train_data[f'решение банка {sys.argv[3]}']
 
-params = yaml.safe_load(open("params.yaml"))["tree"]
+#Так как данные не сбалансированы, применяем метод балансировки
+nm = NearMiss()
+X_train_miss, Y_train_miss = nm.fit_resample(X_train, y_train)
+
+params = yaml.safe_load(open("params.yaml"))["neural"]
 
 f_output = os.path.join(os.getcwd(), f"models//{sys.argv[2]}")
 
 max_depth = params["max_depth"]
 seed = params["seed"]
 
-clf = DecisionTreeClassifier(max_depth=max_depth, random_state=seed)
-clf.fit(X_train, y_train)
+neural_net = MLPClassifier(hidden_layer_sizes=(6,2),
+                    random_state=seed,
+                    verbose=True,
+                    max_iter = max_depth,
+                    learning_rate_init=0.01)
+
+neural_net.fit(X_train_miss, Y_train_miss)
 
 with open(f_output, "wb") as fd:
-    pickle.dump(clf, fd)
+    pickle.dump(neural_net, fd)
