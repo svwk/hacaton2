@@ -52,7 +52,7 @@ def create_features_in_dataset(source_dataset):
     merch_code = pd.get_dummies(df['Merch_code'], prefix="код магазина", dtype=int)
 
     df['кредитная нагрузка'] = (df['MonthProfit'] - df['MonthExpense']) / (df['Loan_amount'] / df['Loan_term'])
-    df['кредитная нагрузка'] = np.where(df['кредитная нагрузка'] < 0, 0, df['кредитная нагрузка'])
+    # df['кредитная нагрузка'] = np.where(df['кредитная нагрузка'] < 0, 0, df['кредитная нагрузка'])
     df['кредит возможен'] = np.where(df['кредитная нагрузка'] > 1.25, 1, 0)
 
     df['возраст'] = df['BirthDate'].apply(lambda r: relativedelta(datetime.today(), r).years)
@@ -61,9 +61,10 @@ def create_features_in_dataset(source_dataset):
 
     last_seniority = df.apply(set_last_seniority_cat, axis=1)
     df['стаж работы на последнем месте'] = pd.Categorical(last_seniority, ordered=True)
+    last_seniority=pd.get_dummies(df['стаж работы на последнем месте'], prefix="последний стаж", dtype=int)
 
     df = pd.concat(
-        [df, value, education, employment_status, family_status, loan_term, goods_category, merch_code],
+        [df, value, education, employment_status, family_status, loan_term, goods_category, merch_code, last_seniority],
         axis=1
     )
 
@@ -89,6 +90,7 @@ def create_features_in_dataset(source_dataset):
     df['образование код'] = df['education'].cat.codes
     df['тип занятости код'] = df['employment status'].cat.codes
     df['стаж работы код'] = df['Value'].cat.codes
+    df['последний стаж код'] = df['Value'].cat.codes
 
     df = df.rename(columns={
         'MonthProfit': 'ежемесячный доход',
