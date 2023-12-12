@@ -11,37 +11,35 @@ import numpy as np
 
 from sklearn.neural_network import MLPClassifier
 from imblearn.under_sampling import NearMiss
+from  model_methods import clear_train_test_data_frame
 
+
+params = yaml.safe_load(open("params.yaml"))["neural"]
+bank_params = yaml.safe_load(open("params.yaml"))["bank"]
+
+max_depth = params["max_depth"]
+learning_rate = params["learning_rate_init"]
+verbose = params["verbose"]
+hidden_layer_x = params["hidden_layer_sizes_x"]
+hidden_layer_y = params["hidden_layer_sizes_y"]
+
+bank = bank_params["bank_id"]
 
 train_data = pd.read_csv(sys.argv[1], sep=';')
 
-print(train_data.head(1))
-
-X_train = train_data.drop(f'решение банка {sys.argv[3]}', axis=1)
-X_train = X_train.drop('образование', axis=1)
-X_train = X_train.drop('тип занятости', axis=1)
-X_train = X_train.drop('стаж работы', axis=1)
-X_train = X_train.drop('семейное положение', axis=1)
-X_train = X_train.drop('категория товара', axis=1)
-X_train = X_train.drop('стаж работы на последнем месте', axis=1)
-y_train = train_data[f'решение банка {sys.argv[3]}']
+X_train = clear_train_test_data_frame(train_data, bank)
+y_train = train_data[f'решение банка {bank}']
 
 #Так как данные не сбалансированы, применяем метод балансировки
 nm = NearMiss()
 X_train_miss, Y_train_miss = nm.fit_resample(X_train, y_train)
 
-params = yaml.safe_load(open("params.yaml"))["neural"]
+f_output = os.path.join(os.getcwd(), f'models//model_net_{bank}.pkl')
 
-f_output = os.path.join(os.getcwd(), f"models//{sys.argv[2]}")
-
-max_depth = params["max_depth"]
-seed = params["seed"]
-
-neural_net = MLPClassifier(hidden_layer_sizes=(6,2),
-                    random_state=seed,
-                    verbose=True,
+neural_net = MLPClassifier(hidden_layer_sizes=(hidden_layer_x, hidden_layer_y),
+                    verbose=verbose,
                     max_iter = max_depth,
-                    learning_rate_init=0.01)
+                    learning_rate_init=learning_rate)
 
 neural_net.fit(X_train_miss, Y_train_miss)
 

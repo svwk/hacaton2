@@ -1,14 +1,19 @@
 split:
   split_ratio: 0.3
 
+bank:
+  bank_id: A
+
 tree:
-  seed: 42
   max_depth: 4
 
 log_reg:
-  seed: 42
   max_depth: 5
+  treshold : 0.75
 
 neural:
-  seed: 42
-  max_depth: 20
+  max_depth: 1000
+  learning_rate_init: 0.005
+  verbose: True
+  hidden_layer_sizes_x: 6
+  hidden_layer_sizes_y: 2
