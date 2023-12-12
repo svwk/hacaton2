@@ -23,7 +23,13 @@ def fix_errors_in_dataset(source_dataset):
     """
 
     df = source_dataset.copy()
-    df = prepare_dataset(df)
+    # df = prepare_dataset(df)
+
+    features = ["MonthProfit", "MonthExpense"]
+    for feature in features:
+        lower_bound, upper_bound = get_bounds((df[feature]))
+        df = df.drop(df[(df[feature] < lower_bound) | (df[feature] > upper_bound)].index)
+    df = df.reset_index(drop=True)
 
     df = df.apply(fix_seniority, axis=1)
     df = df.apply(fix_expense, axis=1)
@@ -121,6 +127,30 @@ def fix_seniority(application_data):
         application_data['Value'] = months_seniority_to_cat(new_total_seniority)
 
     return application_data
+
+
+def search_outliers(feature):
+    """Функция принимает набор значений  признака и
+    возвращает массив индексов тех значений, которые являются выбросами
+
+        Returns:
+            int: количество выбросов в столбце
+    """
+    lower_bound, upper_bound = get_bounds(feature)
+    return np.where((feature < lower_bound) | (feature > upper_bound))[0]
+
+
+def get_bounds(feature):
+    """
+    Вычисляет пределы для нахождения выбросов
+    :param feature: набор данных
+    :return: нижняя и верхняя граница пределов
+    """
+    q1, q3 = np.percentile(feature, [25, 60])
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+    return lower_bound, upper_bound
 
 
 if __name__ == "__main__":

@@ -15,16 +15,21 @@ def fill_na_in_dataset(source_dataset):
     df = df.dropna(how='all')
 
     df = df.drop_duplicates()
+    df = df.drop(columns=['SkillFactory_Id', 'Position'''])
     df = df.reset_index(drop=True)
 
     mode_gender = df['Gender'].value_counts().idxmax()
     mode_family_status = df['Family status'].value_counts().idxmax()
+    mode_loan_term = df['Loan_term'].value_counts().idxmax()
 
     df['Value'] = df['Value'].fillna('Нет стажа')
     # df['JobStartDate'] = df['JobStartDate'].fillna(datetime.strftime(date.today(), "%Y-%m-%d %H:%M:%S"))
     df['Gender'] = df['Gender'].fillna(mode_gender)
     df['Family status'] = df['Family status'].fillna(mode_family_status)
     df['ChildCount'] = df['ChildCount'].fillna(0)
+    df['SNILS'] = df['SNILS'].fillna(0)
+    df['Loan_amount'] = df['Loan_amount'].fillna(df['Loan_amount'].median())
+    df['Loan_term'] = df['Loan_term'].fillna(mode_loan_term)
 
     return df
 
