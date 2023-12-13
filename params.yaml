@@ -1,5 +1,6 @@
 split:
   split_ratio: 0.3
+  random_state: 45
 
 general:
   bank_id: A
