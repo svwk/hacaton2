@@ -62,35 +62,39 @@ stages:
     - data/stage_train_test_split/train_${general.bank_id}.csv
     - data/stage_train_test_split/test_${general.bank_id}.csv
 
-#  train:
-#    cmd: python scripts/model_scripts/${general.train_method}.py data/stage_train_test_split/train_${bank.bank_id}.csv
-#    deps:
-#      - data/stage_train_test_split/train_${bank.bank_id}.csv
-#      - scripts/model_scripts/${general.train_method}.py
-#      - models/scaler_${general.bank_id}.pkl
-#    params:
-#      - general.train_method
-#      - general.bank_id
-#      - tree.max_depth
-#      - tree.n_estimators
-#      - log_reg.max_depth
-#      - neural.max_depth
-#      - neural.learning_rate_init
-#      - neural.verbose
-#      - neural.hidden_layer_sizes_x
-#      - neural.hidden_layer_sizes_y
-#    outs:
-#      - models/model_${general.train_method}.pkl
-#
-#    evaluate:
-#      cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${bank.bank_id}.csv models/model_${general.train_method}_${bank.bank_id}.pkl score_${general.train_method}_${bank.bank_id}.json
-#      deps:
-#        - data/stage_train_test_split/test_${bank.bank_id}.csv
-#        - models/model_${bank.bank_id}.pkl
-#        - scripts/model_scripts/evaluate.py
-#      params:
-#        - general.bank_id
-#        - general.train_method
-#      metrics:
-#        - evaluate/score_${general.train_method}_${bank.bank_id}.json:
-#            cache: true
+  train:
+    cmd: python scripts/model_scripts/${general.train_method}.py data/stage_train_test_split/train_${bank.bank_id}.csv
+    deps:
+      - data/stage_train_test_split/train_${bank.bank_id}.csv
+      - scripts/model_scripts/${general.train_method}.py
+      - models/scaler_${general.bank_id}.pkl
+    params:
+      - general.train_method
+      - general.bank_id
+      - tree.max_depth
+      - tree.n_estimators
+      - tree.eta
+      - tree.reg_lambda
+      - tree.reg_alpha
+      - tree.scale_pos_weight
+      - log_reg.max_depth
+      - neural.max_depth
+      - neural.learning_rate_init
+      - neural.verbose
+      - neural.hidden_layer_sizes_x
+      - neural.hidden_layer_sizes_y
+    outs:
+      - models/model_${general.train_method}.pkl
+
+    evaluate:
+      cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${bank.bank_id}.csv models/model_${general.train_method}_${bank.bank_id}.pkl score_${general.train_method}_${bank.bank_id}.json
+      deps:
+        - data/stage_train_test_split/test_${bank.bank_id}.csv
+        - models/model_${bank.bank_id}.pkl
+        - scripts/model_scripts/evaluate.py
+      params:
+        - general.bank_id
+        - general.train_method
+      metrics:
+        - evaluate/score_${general.train_method}_${bank.bank_id}.json:
+            cache: true

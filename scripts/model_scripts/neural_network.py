@@ -11,7 +11,7 @@ import numpy as np
 
 from sklearn.neural_network import MLPClassifier
 from imblearn.under_sampling import NearMiss
-from  model_methods import clear_train_test_data_frame
+from model_methods import clear_train_test_data_frame
 
 
 params = yaml.safe_load(open("params.yaml"))["neural"]
