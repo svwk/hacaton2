@@ -48,91 +48,6 @@ stages:
 #    outs:
 #    - data/stage_train_test_split
 
-#  evaluate_dec_tree_for_D:
-#    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_D.csv models/model_tree_D.pkl score_dec_tree_D.json D
-#    deps:
-#      - data/stage_train_test_split/test_D.csv
-#      - models/model_tree_D.pkl
-#      - scripts/model_scripts/evaluate.py
-#    metrics:
-#      - evaluate/score_dec_tree_D.json:
-#          cache: false
-#
-#  train_log_reg_for_D:
-#    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_D.csv model_reg_D.pkl D
-#    deps:
-#      - data/stage_train_test_split/train_D.csv
-#      - scripts/model_scripts/logistic_regression.py
-#    params:
-#      - log_reg.max_depth
-#      - log_reg.seed
-#    outs:
-#      - models/model_reg_D.pkl
-#
-#  evaluate_log_reg_for_D:
-#    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_D.csv models/model_reg_D.pkl score_reg_D.json D
-#    deps:
-#      - data/stage_train_test_split/test_D.csv
-#      - models/model_reg_D.pkl
-#      - scripts/model_scripts/evaluate.py
-#    metrics:
-#      - evaluate/score_reg_D.json:
-#          cache: false
-#
-#  train_net_for_D:
-#    cmd: python scripts/model_scripts/neural_network.py data/stage_train_test_split/train_D.csv model_net_D.pkl D
-#    deps:
-#      - data/stage_train_test_split/train_D.csv
-#      - scripts/model_scripts/neural_network.py
-#    params:
-#      - neural.max_depth
-#      - neural.seed
-#    outs:
-#      - models/model_net_D.pkl
-#
-#  evaluate_net_for_D:
-#    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_D.csv models/model_net_D.pkl score_net_D.json D
-#    deps:
-#      - data/stage_train_test_split/test_D.csv
-#      - models/model_net_D.pkl
-#      - scripts/model_scripts/evaluate.py
-#    metrics:
-#      - evaluate/score_net_D.json:
-#          cache: false
-#
-#  train_dec_tree_for_E:
-#    cmd: python scripts/model_scripts/dt.py data/stage_train_test_split/train_E.csv model_tree_E.pkl E
-#    deps:
-#      - data/stage_train_test_split/train_E.csv
-#      - scripts/model_scripts/dt.py
-#    params:
-#      - tree.max_depth
-#      - tree.seed
-#    outs:
-#      - models/model_tree_E.pkl
-#
-#  evaluate_dec_tree_for_E:
-#    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_E.csv models/model_tree_E.pkl score_dec_tree_E.json E
-#    deps:
-#      - data/stage_train_test_split/test_E.csv
-#      - models/model_tree_E.pkl
-#      - scripts/model_scripts/evaluate.py
-#    metrics:
-#      - evaluate/score_dec_tree_E.json:
-#          cache: false
-#
-#  train_log_reg_for_E:
-#    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_E.csv model_reg_E.pkl E
-#  create_features:
-#    cmd: python scripts/data_scripts/create_features.py data/stage_fix_errors/dataset.csv
-#    deps:
-#    - data/stage_fix_errors/dataset.csv
-#    - scripts/data_scripts/create_features.py
-#    - scripts/data_scripts/data_methods.py
-#    - scripts/data_scripts/utils/seniority_cats.py
-#    outs:
-#    - data/stage_create_features
-##
 #  train_test_split:
 #    cmd: python scripts/data_scripts/train_test_split.py data/stage_create_features/dataset.csv
 #    deps:
@@ -144,76 +59,34 @@ stages:
 #    outs:
 #    - data/stage_train_test_split
 
-  train_dec_tree:
-    cmd: python scripts/model_scripts/dt.py data/stage_train_test_split/train_${bank.bank_id}.csv
+  train:
+    cmd: python scripts/model_scripts/${general.train_method}.py data/stage_train_test_split/train_${bank.bank_id}.csv
     deps:
       - data/stage_train_test_split/train_${bank.bank_id}.csv
-      - scripts/model_scripts/dt.py
+      - scripts/model_scripts/${general.train_method}.py
     params:
+      - general.train_method
+      - general.bank_id
       - tree.max_depth
-      - bank.bank_id
-    outs:
-      - models/model_tree_${bank.bank_id}.pkl
-
-  evaluate_dec_tree:
-    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${bank.bank_id}.csv models/model_tree_${bank.bank_id}.pkl score_dec_tree_${bank.bank_id}.json
-    deps:
-      - data/stage_train_test_split/test_${bank.bank_id}.csv
-      - models/model_tree_${bank.bank_id}.pkl
-      - scripts/model_scripts/evaluate.py
-    params:
-      - bank.bank_id
-    metrics:
-    - evaluate/score_dec_tree_${bank.bank_id}.json:
-        cache: true
-
-  train_log_reg:
-    cmd: python scripts/model_scripts/logistic_regression.py data/stage_train_test_split/train_${bank.bank_id}.csv
-    deps:
-      - data/stage_train_test_split/train_${bank.bank_id}.csv
-      - scripts/model_scripts/logistic_regression.py
-    params:
+      - tree.n_estimators
       - log_reg.max_depth
-      - log_reg.treshold
-      - bank.bank_id
-    outs:
-      - models/model_log_${bank.bank_id}.pkl
-
-  evaluate_log_reg:
-    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${bank.bank_id}.csv models/model_log_${bank.bank_id}.pkl score_log_${bank.bank_id}.json
-    deps:
-      - data/stage_train_test_split/test_${bank.bank_id}.csv
-      - models/model_log_${bank.bank_id}.pkl
-      - scripts/model_scripts/evaluate.py
-    params:
-      - bank.bank_id
-    metrics:
-    - evaluate/score_log_${bank.bank_id}.json:
-        cache: true
-
-  train_neur_net:
-    cmd: python scripts/model_scripts/neural_network.py data/stage_train_test_split/train_${bank.bank_id}.csv
-    deps:
-      - data/stage_train_test_split/train_${bank.bank_id}.csv
-      - scripts/model_scripts/neural_network.py
-    params:
       - neural.max_depth
       - neural.learning_rate_init
       - neural.verbose
       - neural.hidden_layer_sizes_x
       - neural.hidden_layer_sizes_y
-      - bank.bank_id
     outs:
-      - models/model_net_${bank.bank_id}.pkl
+      - models/model_${general.train_method}.pkl
 
-  evaluate_neur_net:
-    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${bank.bank_id}.csv models/model_net_${bank.bank_id}.pkl score_net_${bank.bank_id}.json
-    deps:
-      - data/stage_train_test_split/test_${bank.bank_id}.csv
-      - models/model_net_${bank.bank_id}.pkl
-      - scripts/model_scripts/evaluate.py
-    params:
-      - bank.bank_id
-    metrics:
-    - evaluate/score_net_${bank.bank_id}.json:
-        cache: true
+    evaluate:
+      cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${bank.bank_id}.csv models/model_${general.train_method}_${bank.bank_id}.pkl score_${general.train_method}_${bank.bank_id}.json
+      deps:
+        - data/stage_train_test_split/test_${bank.bank_id}.csv
+        - models/model_${bank.bank_id}.pkl
+        - scripts/model_scripts/evaluate.py
+      params:
+        - general.bank_id
+        - general.train_method
+      metrics:
+        - evaluate/score_${general.train_method}_${bank.bank_id}.json:
+            cache: true
