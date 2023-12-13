@@ -1,11 +1,16 @@
 #! python
 # -*- coding: UTF-8 -*-
 
+import numpy as np
+import pandas as pd
+
 from data_methods import create_stage
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from data_prepare import prepare_dataset
+from utils.seniority_cats import months_seniority_to_cat, seniority_cat_to_month_count
+from utils.seniority_cats import set_last_seniority
 
 # Прожиточный минимум
 ADULT_LIVING_WAGE = 15669
@@ -19,7 +24,13 @@ def fix_errors_in_dataset(source_dataset):
     """
 
     df = source_dataset.copy()
-    df = prepare_dataset(df)
+
+    # Удаление выбросов
+    features = ["MonthProfit", "MonthExpense"]
+    for feature in features:
+        lower_bound, upper_bound = get_bounds((df[feature]))
+        df = df.drop(df[(df[feature] < lower_bound) | (df[feature] > upper_bound)].index)
+    df = df.reset_index(drop=True)
 
     df = df.apply(fix_seniority, axis=1)
     df = df.apply(fix_expense, axis=1)
@@ -73,121 +84,74 @@ def fix_seniority(application_data):
     """
 
     # Общий стаж в месяцах
-    total_seniority_in_months = int(values_to_num(application_data['Value']))
+    total_seniority_in_months = int(seniority_cat_to_month_count(application_data['Value']))
 
     # Возраст
     age = relativedelta(datetime.today(), application_data['BirthDate'])
+
+    # Проверка на соответствие трудовому законодательству
+    if age.years < 16:
+        application_data['Value'] = 'Нет стажа'
+        application_data['JobStartDate'] = np.NAN
+        return application_data
 
     # Максимально возможный трудовой стаж в месяцах
     # (возраст - 16) (ТК)
     max_seniority_in_months = age.months + (age.years - 16) * 12
 
-    # Стаж работы на последнем месте
-    last_seniority = relativedelta(datetime.today(), application_data['JobStartDate'])
-
-    # Стаж работы на последнем месте в месяцах
-    last_seniority_in_months = last_seniority.months + last_seniority.years * 12
-
-    # Проверка на соответствие трудовому законодательству
-    if age.years < 16:
-        application_data['Value'] = 'Нет стажа'
-        return application_data
-
-    # Стаж на последнем рабочем месте не может быть больше,
-    # чем максимально возможный трудовой стаж
-    new_last_seniority = min(last_seniority_in_months, max_seniority_in_months)
-
     # Общий стаж не может быть больше,
     # чем максимально возможный трудовой стаж
     new_total_seniority = min(total_seniority_in_months, max_seniority_in_months)
 
-    # Общий стаж не может быть меньше, чем стаж на последнем рабочем месте
-    new_total_seniority = max(new_total_seniority, new_last_seniority)
+    # Стаж работы на последнем месте
+    if (not pd.isna(application_data['JobStartDate']) and
+            application_data['employment status'] != "Не работаю"):
+        # Стаж работы на последнем месте в месяцах
+        last_seniority_in_months = set_last_seniority(application_data)
+        #     relativedelta(datetime.today(), application_data['JobStartDate'])
+        # # Стаж работы на последнем месте в месяцах
+        # last_seniority_in_months = last_seniority.months + last_seniority.years * 12
 
-    if new_last_seniority != last_seniority_in_months:
-        application_data['JobStartDate'] = (date.today() -
-                                            relativedelta(months=new_last_seniority))
+        # Стаж на последнем рабочем месте не может быть больше,
+        # чем максимально возможный трудовой стаж
+        # Общий стаж не может быть меньше, чем стаж на последнем рабочем  месте
+        new_last_seniority = min(last_seniority_in_months, max_seniority_in_months, new_total_seniority)
+
+        # new_total_seniority = max(new_total_seniority, new_last_seniority)
+
+        if new_last_seniority != last_seniority_in_months:
+            application_data['JobStartDate'] = datetime.strftime((date.today() -
+                                                                  relativedelta(months=new_last_seniority)),
+                                                                 "%Y-%m-%d %H:%M:%S")
 
     if new_total_seniority != total_seniority_in_months:
-        application_data['Value'] = num_to_cat(new_total_seniority)
+        application_data['Value'] = months_seniority_to_cat(new_total_seniority)
 
     return application_data
 
 
-def values_to_num(str_value):
+def search_outliers(feature):
+    """Функция принимает набор значений  признака и
+    возвращает массив индексов тех значений, которые являются выбросами
+
+        Returns:
+            int: количество выбросов в столбце
     """
-    Конвертация категориального значения стажа в целое число
-    :param str_value:  Данные из заявки
+    lower_bound, upper_bound = get_bounds(feature)
+    return np.where((feature < lower_bound) | (feature > upper_bound))[0]
+
+
+def get_bounds(feature):
     """
-
-    str_value = str(str_value)
-
-    if str_value == 'Нет стажа':
-        return 0
-    elif 'менее 4 месяцев' in str_value:
-        return 3
-    elif '4 - 6 месяцев' in str_value:
-        return 4
-    elif '6 месяцев' in str_value:
-        return 6
-    elif '6 месяцев - 1 год' in str_value:
-        return 9
-
-    words_array = str_value.split(' ')
-    numeric_filtered_array = list(filter(lambda x: x.isdigit(), words_array))
-    numeric_value = min([int(y) for y in numeric_filtered_array]) * 12
-    return numeric_value
-
-
-def num_to_cat(numeric_value):
+    Вычисляет пределы для нахождения выбросов
+    :param feature: набор данных
+    :return: нижняя и верхняя граница пределов
     """
-    Конвертация числового значения стажа в категориальный
-    :param numeric_value:
-    :param str_value:  Данные из заявки
-    """
-    if numeric_value == 0:
-        return 'Нет стажа'
-    elif numeric_value == 3:
-        return 'Нет стажа'
-    elif numeric_value == 4:
-        return '4 - 6 месяцев'
-    elif numeric_value == 6:
-        return '6 месяцев'
-    elif numeric_value == 9:
-        return '6 месяцев - 1 год'
-
-    if 12 <= numeric_value < 24:
-        return '1 - 2 года'
-    elif 24 <= numeric_value < 36:
-        return '2 - 3 года'
-    elif 36 <= numeric_value < 48:
-        return '3 - 4 года'
-    elif 48 <= numeric_value < 60:
-        return '4 - 5 лет'
-    elif 60 <= numeric_value < 72:
-        return '5 - 6 лет'
-    elif 72 <= numeric_value < 84:
-        return '6 - 7 лет'
-    elif 84 <= numeric_value < 96:
-        return '7 - 8 лет'
-    elif 96 <= numeric_value < 108:
-        return '8 - 9 лет'
-    elif 108 <= numeric_value < 120:
-        return '9 - 10 лет'
-    elif numeric_value >= 120:
-        return '10 и более лет'
-
-
-def time_diff(date_value):
-    """
-    Определяет разницу между некоторой датой и текущей
-    в месяцах
-    :param date_value: Дата, для которой необходимо найти разницу
-    """
-
-    from_now_to_start_job = datetime.today() - date_value
-
-    return int(from_now_to_start_job.days / 30)
+    q1, q3 = np.percentile(feature, [25, 85])
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+    return lower_bound, upper_bound
 
 
 if __name__ == "__main__":
