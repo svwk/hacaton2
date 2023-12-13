@@ -21,6 +21,15 @@ seniority_values = {
     '10 и более лет': range(120, 1000),
 }
 
+new_seniority_values = {
+    'Нет стажа': range(0, 1),
+    'Менее 6 месяцев': range(1, 6),
+    'Менее 2 лет': range(6, 24),
+    'Менее 5 лет': range(24, 60),
+    'Менее 10 лет': range(60, 120),
+    '10 и более лет': range(120, 1000),
+}
+
 
 def months_seniority_to_cat(numeric_value):
     """
@@ -35,6 +44,25 @@ def months_seniority_to_cat(numeric_value):
     numeric_value = int(numeric_value)
 
     for key, value_range in seniority_values.items():
+        if numeric_value in value_range:
+            return key
+
+    return DEFAULT_CAT
+
+
+def months_seniority_to_new_cat(numeric_value):
+    """
+    Конвертация числового значения стажа в строковое
+    представление новой категории стажа
+    :param numeric_value: стаж (количество месяцев)
+    :return строковое представление новой категории стажа
+    """
+    if numeric_value is None:
+        return None
+
+    numeric_value = int(numeric_value)
+
+    for key, value_range in new_seniority_values.items():
         if numeric_value in value_range:
             return key
 
@@ -69,3 +97,8 @@ def set_last_seniority_cat(application_data):
 
     return months_seniority_to_cat(last_seniority)
 
+
+def set_last_seniority_new_cat(application_data):
+    last_seniority = set_last_seniority(application_data)
+
+    return months_seniority_to_new_cat(last_seniority)

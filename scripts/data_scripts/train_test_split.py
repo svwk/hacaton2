@@ -39,7 +39,7 @@ def separate_bank_dataset(source_dataset, p_split_ratio, bank_id, random_state=4
 stage_name = "train_test_split"
 params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))["split"]
 split_ratio = params["split_ratio"]
-bank_id_list = params["bank_id_list"]
+bank_id = params["bank_id"]
 
 if len(sys.argv) != 2:
     sys.stderr.write("Arguments error. Usage:\n")

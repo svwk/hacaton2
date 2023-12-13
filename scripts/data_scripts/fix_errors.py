@@ -1,5 +1,6 @@
 #! python
 # -*- coding: UTF-8 -*-
+
 import numpy as np
 import pandas as pd
 
@@ -23,8 +24,8 @@ def fix_errors_in_dataset(source_dataset):
     """
 
     df = source_dataset.copy()
-    # df = prepare_dataset(df)
 
+    # Удаление выбросов
     features = ["MonthProfit", "MonthExpense"]
     for feature in features:
         lower_bound, upper_bound = get_bounds((df[feature]))
@@ -146,7 +147,7 @@ def get_bounds(feature):
     :param feature: набор данных
     :return: нижняя и верхняя граница пределов
     """
-    q1, q3 = np.percentile(feature, [25, 60])
+    q1, q3 = np.percentile(feature, [25, 85])
     iqr = q3 - q1
     lower_bound = q1 - 1.5 * iqr
     upper_bound = q3 + 1.5 * iqr

@@ -1,6 +1,6 @@
 split:
   split_ratio: 0.3
-  bank_id_list: [A, B, C, D, E]
+  bank_id: A
 
 train:
   seed: 42
