@@ -9,57 +9,86 @@ stages:
       size: 2263967
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: eecad11fa517167b53b1509b3de4896e
-      size: 1538
+      md5: 8f4c4feaed97c78c594ebe5868dc8f44
+      size: 1560
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: 163aa7e8ac3ab45162efa3bd050b36e5
-      size: 910
+      md5: 48e08dcde35a865adcdb2a96b40c620a
+      size: 1256
     outs:
     - path: data/stage_fill_na
       hash: md5
-      md5: f0e6e3d9547c3b3b81f7f90088e40c18.dir
-      size: 2211795
+      md5: 174cdf61f462ccc99716d59351e91237.dir
+      size: 1887649
       nfiles: 1
   data_prepare:
     cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
     deps:
     - path: data/stage_fill_na/dataset.csv
       hash: md5
-      md5: 6b3e34292a61f21c3ced84c7489ac2bd
-      size: 2211795
+      md5: f4954ca67a388cf81fdafbe790020f33
+      size: 1887649
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: eecad11fa517167b53b1509b3de4896e
-      size: 1538
+      md5: 8f4c4feaed97c78c594ebe5868dc8f44
+      size: 1560
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: afbb0c24de49a81cc0b5833eed1578ed
-      size: 764
+      md5: 787538afd88aa38cc2131846af9b0f52
+      size: 956
     outs:
     - path: data/stage_data_prepare
       hash: md5
-      md5: ed71fc1a53e6baa93202c014b647e718.dir
-      size: 2158971
+      md5: 3203624543957a469403337d82ba162c.dir
+      size: 1782001
       nfiles: 1
   fix_errors:
     cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
     deps:
     - path: data/stage_data_prepare/dataset.csv
       hash: md5
-      md5: b30a8762c44cbe98d64d89d77fdc7d01
-      size: 2158971
+      md5: 721884eb6032dbfbb95cb636462576df
+      size: 1782001
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: eecad11fa517167b53b1509b3de4896e
-      size: 1538
+      md5: 8f4c4feaed97c78c594ebe5868dc8f44
+      size: 1560
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: b69895e364dcb3cf298883e64bfbee43
-      size: 6803
+      md5: c05cc15baf50871a8f00e8331728009e
+      size: 6310
+    - path: scripts/data_scripts/utils/seniority_cats.py
+      hash: md5
+      md5: 3664c85e9fb2d31c327ba42b91f5a9b9
+      size: 3445
     outs:
     - path: data/stage_fix_errors
       hash: md5
-      md5: 11b80ab9c36562c80257157563ca50ce.dir
-      size: 2109748
+      md5: 266b8da93d7e49ae1831ac3d8acef7c5.dir
+      size: 1795738
+      nfiles: 1
+  create_features:
+    cmd: python scripts/data_scripts/create_features.py data/stage_fix_errors/dataset.csv
+    deps:
+    - path: data/stage_fix_errors/dataset.csv
+      hash: md5
+      md5: 2ea5da729f6d2d0acf5c3a842f3ffc15
+      size: 1795738
+    - path: scripts/data_scripts/create_features.py
+      hash: md5
+      md5: fb5f6102930f089c74a8f06cc700856b
+      size: 10546
+    - path: scripts/data_scripts/data_methods.py
+      hash: md5
+      md5: 8f4c4feaed97c78c594ebe5868dc8f44
+      size: 1560
+    - path: scripts/data_scripts/utils/seniority_cats.py
+      hash: md5
+      md5: 3664c85e9fb2d31c327ba42b91f5a9b9
+      size: 3445
+    outs:
+    - path: data/stage_create_features
+      hash: md5
+      md5: af3e49b80e16b967808dbdb168cd7f77.dir
+      size: 2896567
       nfiles: 1

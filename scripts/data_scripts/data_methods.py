@@ -28,6 +28,7 @@ def create_stage(stage_name, function):
 
     # %% Задание путей для файлов
     stage_dir = os.path.join(project_path, "data", f"stage_{stage_name}")
+    os.makedirs(stage_dir, exist_ok=True)
 
     # %% Чтение файла данных
     filename_input = os.path.join(project_path, f_input)
@@ -37,8 +38,9 @@ def create_stage(stage_name, function):
     df = function(df)
 
     # Сохранение DataFrame в файл
-    os.makedirs(stage_dir, exist_ok=True)
     df.to_csv(filename_output, index=False, sep=';')
+
+    return stage_dir
 
 
 def to_polynom(x, order=2):
