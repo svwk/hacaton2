@@ -115,7 +115,6 @@ stages:
     deps:
       - data/stage_train_test_split/test_${general.bank_id}.csv
       - models/model_${general.train_method}_${general.bank_id}.pkl
-      - score_${general.train_method}_${general.bank_id}.json
       - scripts/model_scripts/evaluate.py
       - scripts/model_scripts/${general.train_method}.py
       - scripts/data_scripts/train_test_split.py

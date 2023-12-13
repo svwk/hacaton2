@@ -20,22 +20,23 @@ if len(sys.argv) != 4:
 
 test_data = pd.read_csv(sys.argv[1], sep=';')
 
-bank_params = yaml.safe_load(open("params.yaml"))["bank"]
+bank_params = yaml.safe_load(open("params.yaml"))["general"]
 
-x_test = clear_train_test_data_frame(test_data, bank_params["bank_id"])
-y_test = test_data[f'решение банка {bank_params["bank_id"]}']
+x_test = test_data.drop('Y', axis=1)
+y_test = test_data['Y']
 
 with open(sys.argv[2], "rb") as fd:
     clf = pickle.load(fd)
 
 score = clf.score(x_test, y_test)
-
 preds = clf.predict(x_test)
 
-prc_file = os.path.join("evaluate", sys.argv[3])
-os.makedirs(os.path.join("evaluate"), exist_ok=True)
+path = os.getcwd()
 
-f1 = classification_report(y_test, preds, target_names=['negative', 'meaning', 'positive'], zero_division=True)
+prc_file = os.path.join(path, "evaluate", sys.argv[3])
+os.makedirs(os.path.join(path, "evaluate"), exist_ok=True)
+
+f1 = classification_report(y_test, preds, target_names=['negative', 'positive'], zero_division=True)
 print(f1)
 
 f1_micro = f1_score(y_test, preds, average="micro")
