@@ -3,7 +3,7 @@ split:
   random_state: 45
 
 general:
-  bank_id: A
+  bank_id: B
   train_method: dt
 
 tree:
