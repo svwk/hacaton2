@@ -1,9 +1,14 @@
+import joblib
 import pandas as pd
+import os
+import yaml
+import pickle
 
-from scripts.data_scripts.create_features import create_features_in_dataset
+import scripts.data_scripts.create_features as cf
 from scripts.data_scripts.data_prepare import prepare_dataset
 from scripts.data_scripts.fill_na import fill_na_in_dataset
 from scripts.data_scripts.fix_errors import fix_errors_in_dataset
+import scripts.data_scripts.feature_prepare as fp
 
 
 def predict(client):
@@ -11,11 +16,36 @@ def predict(client):
     Предсказание ообрения банками данного клиента
     :param client: данные в клиента
     """
+
+    # %% Задание каталогов
+    project_path = os.getcwd()
+    model_dir = os.path.join(project_path, "models")
+
+    # Загрузка параметров расчета
+    params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))
+    train_method = params["general"]["train_method"]
+    num_columns = ['Ежемесячный_доход', 'Ежемесячный_расход', 'Сумма_заказа', 'Кредитная_нагрузка']
+
     client_df = convert_data_format(client)
     client_df = fill_na_in_dataset(client_df)
     client_df = prepare_dataset(client_df)
     client_df = fix_errors_in_dataset(client_df)
-    # client_df = create_features_in_dataset(client_df)
+    client_df = cf.replace_features(client_df)
+
+    bank_ids=['A', 'B', 'C', 'D', 'E']
+    preds=[]
+    for bank_id in bank_ids:
+        scaler_filename = f'scaler_{bank_id}.pkl'
+        scaler_full_filename = os.path.join(model_dir, scaler_filename)
+        standard_scaler = joblib.load(scaler_full_filename)
+
+        filename_model = os.path.join(model_dir, 'models', f'model_{train_method}_{bank_id}.pkl')
+        df = fp.feature_prepare_for_bank (client_df, bank_id,standard_scaler, num_columns)
+
+        with open(filename_model, "rb") as fd:
+            clf = pickle.load(fd)
+            pred = clf.predict(client_df)
+            preds.append(pred)
 
     predictions = {
         'BankA_decision': 1,
@@ -25,7 +55,7 @@ def predict(client):
         'BankE_decision': 1,
     }
 
-    return predictions
+    return preds
 
 
 def convert_data_format(raw_data):
