@@ -321,8 +321,8 @@ stages:
       size: 4559
     - path: scripts/model_scripts/evaluate.py
       hash: md5
-      md5: 3268cf1d1c5a787ea4a09d91799fb358
-      size: 2354
+      md5: 6539e3d6542e62e476823c90fa9b9c22
+      size: 2294
     - path: scripts/model_scripts/xgbclassifier.py
       hash: md5
       md5: 3abaa69e3cd9b34a3de6cf571210d445
