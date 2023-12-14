@@ -70,8 +70,8 @@ class ClientData(BaseModel):
     @field_validator("merch_code")
     def field_in_range(cls, value: float | int) -> float | int:
         # Код магазина может лежать только в диапазоне от 1 до 90 (исходя из тренировочных данных)
-        if 1 <= value < 90:
-            raise ValueError(" must be non-negative")
+        if 1 >= value >= 90:
+            raise ValueError(" must be between 1 and 90")
         return value
 
     @field_validator("child_count")
