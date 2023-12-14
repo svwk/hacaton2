@@ -9,254 +9,254 @@ stages:
       size: 2263967
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     outs:
     - path: data/stage_fill_na/dataset.csv
       hash: md5
-      md5: f4954ca67a388cf81fdafbe790020f33
-      size: 1887649
+      md5: eedf003fe974b4e2fdd6b039eca79976
+      size: 1894253
   data_prepare:
     cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
     deps:
     - path: data/stage_fill_na/dataset.csv
       hash: md5
-      md5: f4954ca67a388cf81fdafbe790020f33
-      size: 1887649
+      md5: eedf003fe974b4e2fdd6b039eca79976
+      size: 1894253
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: 787538afd88aa38cc2131846af9b0f52
-      size: 956
+      md5: 786db4bbb8f85c8f0e36d986bb6f9e6d
+      size: 989
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     outs:
     - path: data/stage_data_prepare/dataset.csv
       hash: md5
-      md5: 721884eb6032dbfbb95cb636462576df
-      size: 1782001
+      md5: 6a4e9f080c02ff0aee2c349aa172c3d6
+      size: 1788605
   fix_errors:
     cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
     deps:
     - path: data/stage_data_prepare/dataset.csv
       hash: md5
-      md5: 721884eb6032dbfbb95cb636462576df
-      size: 1782001
+      md5: 6a4e9f080c02ff0aee2c349aa172c3d6
+      size: 1788605
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: 787538afd88aa38cc2131846af9b0f52
-      size: 956
+      md5: 786db4bbb8f85c8f0e36d986bb6f9e6d
+      size: 989
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: 0e7ded8885544f5aeb2dd6fa0959a402
-      size: 6027
+      md5: 42f6ae43e16f3b182d38f7524f16ee55
+      size: 6182
     - path: scripts/data_scripts/utils/seniority_cats.py
       hash: md5
-      md5: 6acc47b696796220d46f6778a18d581d
-      size: 4438
+      md5: 1cfa8e3887fde5d06e74aed337b56152
+      size: 4559
     outs:
     - path: data/stage_fix_errors/dataset.csv
       hash: md5
-      md5: a7832d03e61e4f2aada55b9dcd4637c1
-      size: 1795738
+      md5: d5c91fe0b0281e1c918fab340e583df7
+      size: 1745094
   create_features:
     cmd: python scripts/data_scripts/create_features.py data/stage_fix_errors/dataset.csv
     deps:
     - path: data/stage_fix_errors/dataset.csv
       hash: md5
-      md5: a7832d03e61e4f2aada55b9dcd4637c1
-      size: 1795738
+      md5: d5c91fe0b0281e1c918fab340e583df7
+      size: 1745094
     - path: scripts/data_scripts/create_features.py
       hash: md5
-      md5: 48ceca13c51731ffb2f6c34d2427212a
-      size: 10816
+      md5: 7fe352683e46693ead22baa8807686ac
+      size: 11030
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: 787538afd88aa38cc2131846af9b0f52
-      size: 956
+      md5: 786db4bbb8f85c8f0e36d986bb6f9e6d
+      size: 989
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: 0e7ded8885544f5aeb2dd6fa0959a402
-      size: 6027
+      md5: 42f6ae43e16f3b182d38f7524f16ee55
+      size: 6182
     - path: scripts/data_scripts/utils/seniority_cats.py
       hash: md5
-      md5: 6acc47b696796220d46f6778a18d581d
-      size: 4438
+      md5: 1cfa8e3887fde5d06e74aed337b56152
+      size: 4559
     outs:
     - path: data/stage_create_features/dataset.csv
       hash: md5
-      md5: 6274d8f5ef92cde384798b28bb20165b
-      size: 2896567
+      md5: a198948d11d07ec2d8259d2475b40df5
+      size: 2903001
   feature_prepare:
     cmd: python scripts/data_scripts/feature_prepare.py data/stage_create_features/dataset.csv
     deps:
     - path: data/stage_create_features/dataset.csv
       hash: md5
-      md5: 6274d8f5ef92cde384798b28bb20165b
-      size: 2896567
+      md5: a198948d11d07ec2d8259d2475b40df5
+      size: 2903001
     - path: scripts/data_scripts/create_features.py
       hash: md5
-      md5: 48ceca13c51731ffb2f6c34d2427212a
-      size: 10816
+      md5: 7fe352683e46693ead22baa8807686ac
+      size: 11030
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: 787538afd88aa38cc2131846af9b0f52
-      size: 956
+      md5: 786db4bbb8f85c8f0e36d986bb6f9e6d
+      size: 989
     - path: scripts/data_scripts/feature_prepare.py
       hash: md5
-      md5: 765d576c4d87e743326fe4330d137d0d
-      size: 6926
+      md5: b3ed3415765c9c18b5221083f3138c0f
+      size: 7063
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: 0e7ded8885544f5aeb2dd6fa0959a402
-      size: 6027
+      md5: 42f6ae43e16f3b182d38f7524f16ee55
+      size: 6182
     - path: scripts/data_scripts/utils/seniority_cats.py
       hash: md5
-      md5: 6acc47b696796220d46f6778a18d581d
-      size: 4438
+      md5: 1cfa8e3887fde5d06e74aed337b56152
+      size: 4559
     params:
       params.yaml:
-        general.bank_id: A
+        general.bank_id: E
     outs:
-    - path: data/stage_feature_prepare/dataset_A.csv
+    - path: data/stage_feature_prepare/dataset_E.csv
       hash: md5
-      md5: 50859fe2e751e108787779bc7a56318e
-      size: 2886425
-    - path: models/scaler_A.pkl
+      md5: 47b5bcce1f14eb9163e25525c36d7114
+      size: 2918211
+    - path: models/scaler_E.pkl
       hash: md5
-      md5: 8a0b7d24e23bd95396d8a9f09da44d30
+      md5: 573514b600e4371dbd2ef9d9266a16bd
       size: 1159
   train_test_split:
-    cmd: python scripts/data_scripts/train_test_split.py data/stage_feature_prepare/dataset_A.csv
+    cmd: python scripts/data_scripts/train_test_split.py data/stage_feature_prepare/dataset_E.csv
     deps:
-    - path: data/stage_feature_prepare/dataset_A.csv
+    - path: data/stage_feature_prepare/dataset_E.csv
       hash: md5
-      md5: 50859fe2e751e108787779bc7a56318e
-      size: 2886425
+      md5: 47b5bcce1f14eb9163e25525c36d7114
+      size: 2918211
     - path: scripts/data_scripts/create_features.py
       hash: md5
-      md5: 48ceca13c51731ffb2f6c34d2427212a
-      size: 10816
+      md5: 7fe352683e46693ead22baa8807686ac
+      size: 11030
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: 787538afd88aa38cc2131846af9b0f52
-      size: 956
+      md5: 786db4bbb8f85c8f0e36d986bb6f9e6d
+      size: 989
     - path: scripts/data_scripts/feature_prepare.py
       hash: md5
-      md5: 765d576c4d87e743326fe4330d137d0d
-      size: 6926
+      md5: b3ed3415765c9c18b5221083f3138c0f
+      size: 7063
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: 0e7ded8885544f5aeb2dd6fa0959a402
-      size: 6027
+      md5: 42f6ae43e16f3b182d38f7524f16ee55
+      size: 6182
     - path: scripts/data_scripts/train_test_split.py
       hash: md5
-      md5: 1b774b8228aa69034c23ae2edb0f6d69
-      size: 2795
+      md5: 9634d8b795cc08bb72e812fb15ac8764
+      size: 2866
     - path: scripts/data_scripts/utils/seniority_cats.py
       hash: md5
-      md5: 6acc47b696796220d46f6778a18d581d
-      size: 4438
+      md5: 1cfa8e3887fde5d06e74aed337b56152
+      size: 4559
     params:
       params.yaml:
-        general.bank_id: A
+        general.bank_id: E
         split.split_ratio: 0.3
     outs:
-    - path: data/stage_train_test_split/test_A.csv
+    - path: data/stage_train_test_split/test_E.csv
       hash: md5
-      md5: 3ce572466941a4bcde181d89a0e55ee0
-      size: 853898
-    - path: data/stage_train_test_split/train_A.csv
+      md5: 50b5a8c515912a7c1f1806acbb98b007
+      size: 863225
+    - path: data/stage_train_test_split/train_E.csv
       hash: md5
-      md5: e64701f6afc00a95e6a049d33325e7c7
-      size: 1986367
+      md5: b254680cbec938f02b8092dc5e870060
+      size: 2008938
   train:
-    cmd: python scripts/model_scripts/xgbclassifier.py data/stage_train_test_split/train_A.csv
+    cmd: python scripts/model_scripts/xgbclassifier.py data/stage_train_test_split/train_E.csv
     deps:
-    - path: data/stage_train_test_split/train_A.csv
+    - path: data/stage_train_test_split/train_E.csv
       hash: md5
-      md5: e64701f6afc00a95e6a049d33325e7c7
-      size: 1986367
+      md5: b254680cbec938f02b8092dc5e870060
+      size: 2008938
     - path: scripts/data_scripts/create_features.py
       hash: md5
-      md5: 48ceca13c51731ffb2f6c34d2427212a
-      size: 10816
+      md5: 7fe352683e46693ead22baa8807686ac
+      size: 11030
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: 787538afd88aa38cc2131846af9b0f52
-      size: 956
+      md5: 786db4bbb8f85c8f0e36d986bb6f9e6d
+      size: 989
     - path: scripts/data_scripts/feature_prepare.py
       hash: md5
-      md5: 765d576c4d87e743326fe4330d137d0d
-      size: 6926
+      md5: b3ed3415765c9c18b5221083f3138c0f
+      size: 7063
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: 0e7ded8885544f5aeb2dd6fa0959a402
-      size: 6027
+      md5: 42f6ae43e16f3b182d38f7524f16ee55
+      size: 6182
     - path: scripts/data_scripts/train_test_split.py
       hash: md5
-      md5: 1b774b8228aa69034c23ae2edb0f6d69
-      size: 2795
+      md5: 9634d8b795cc08bb72e812fb15ac8764
+      size: 2866
     - path: scripts/data_scripts/utils/seniority_cats.py
       hash: md5
-      md5: 6acc47b696796220d46f6778a18d581d
-      size: 4438
+      md5: 1cfa8e3887fde5d06e74aed337b56152
+      size: 4559
     - path: scripts/model_scripts/xgbclassifier.py
       hash: md5
-      md5: 8f4c80c86b28162652bda05f3dee0769
-      size: 2591
+      md5: 3abaa69e3cd9b34a3de6cf571210d445
+      size: 2673
     params:
       params.yaml:
-        general.bank_id: A
+        general.bank_id: E
         general.train_method: xgbclassifier
         log_reg.max_iter: 15
         neural.hidden_layer_sizes_x: 6
@@ -264,75 +264,75 @@ stages:
         neural.learning_rate_init: 0.005
         neural.max_depth: 1000
         neural.verbose: true
-        tree.eta: 1
-        tree.max_depth: 400
-        tree.n_estimators: 100
-        tree.reg_alpha: 4
-        tree.reg_lambda: 10
-        tree.scale_pos_weight: 8
+        tree.eta: 0.01
+        tree.max_depth: 50
+        tree.n_estimators: 200
+        tree.reg_alpha: 1
+        tree.reg_lambda: 2
+        tree.scale_pos_weight: 9
     outs:
-    - path: models/model_xgbclassifier_A.pkl
+    - path: models/model_xgbclassifier_E.pkl
       hash: md5
-      md5: 6c99054a4e60eeb005c5dd0336d3228a
-      size: 758854
+      md5: 00b8bcf80702817bf51a2999b52fe304
+      size: 4828795
   evaluate:
-    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_A.csv
-      model_xgbclassifier_A.pkl score_xgbclassifier_A.json
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_E.csv
+      model_xgbclassifier_E.pkl score_xgbclassifier_E.json
     deps:
-    - path: data/stage_train_test_split/test_A.csv
+    - path: data/stage_train_test_split/test_E.csv
       hash: md5
-      md5: 3ce572466941a4bcde181d89a0e55ee0
-      size: 853898
-    - path: models/model_xgbclassifier_A.pkl
+      md5: 50b5a8c515912a7c1f1806acbb98b007
+      size: 863225
+    - path: models/model_xgbclassifier_E.pkl
       hash: md5
-      md5: 6c99054a4e60eeb005c5dd0336d3228a
-      size: 758854
+      md5: 00b8bcf80702817bf51a2999b52fe304
+      size: 4828795
     - path: scripts/data_scripts/create_features.py
       hash: md5
-      md5: 48ceca13c51731ffb2f6c34d2427212a
-      size: 10816
+      md5: 7fe352683e46693ead22baa8807686ac
+      size: 11030
     - path: scripts/data_scripts/data_methods.py
       hash: md5
-      md5: a3e0a65b5adcf83fa09e1dc11ff83986
-      size: 1701
+      md5: b2f3ceaefa0c117c3e8d7b0579c74e0e
+      size: 1746
     - path: scripts/data_scripts/data_prepare.py
       hash: md5
-      md5: 787538afd88aa38cc2131846af9b0f52
-      size: 956
+      md5: 786db4bbb8f85c8f0e36d986bb6f9e6d
+      size: 989
     - path: scripts/data_scripts/feature_prepare.py
       hash: md5
-      md5: 765d576c4d87e743326fe4330d137d0d
-      size: 6926
+      md5: b3ed3415765c9c18b5221083f3138c0f
+      size: 7063
     - path: scripts/data_scripts/fill_na.py
       hash: md5
-      md5: d74c5cbd328c21c02aaa931012d31aaa
-      size: 1374
+      md5: 08a4e8ae1306b4d3db1c97057cb215a3
+      size: 1416
     - path: scripts/data_scripts/fix_errors.py
       hash: md5
-      md5: 0e7ded8885544f5aeb2dd6fa0959a402
-      size: 6027
+      md5: 42f6ae43e16f3b182d38f7524f16ee55
+      size: 6182
     - path: scripts/data_scripts/train_test_split.py
       hash: md5
-      md5: 1b774b8228aa69034c23ae2edb0f6d69
-      size: 2795
+      md5: 9634d8b795cc08bb72e812fb15ac8764
+      size: 2866
     - path: scripts/data_scripts/utils/seniority_cats.py
       hash: md5
-      md5: 6acc47b696796220d46f6778a18d581d
-      size: 4438
+      md5: 1cfa8e3887fde5d06e74aed337b56152
+      size: 4559
     - path: scripts/model_scripts/evaluate.py
       hash: md5
-      md5: 30c3a1aa8ef48d9a99428dccadc120f0
-      size: 2231
+      md5: 6539e3d6542e62e476823c90fa9b9c22
+      size: 2294
     - path: scripts/model_scripts/xgbclassifier.py
       hash: md5
-      md5: 8f4c80c86b28162652bda05f3dee0769
-      size: 2591
+      md5: 3abaa69e3cd9b34a3de6cf571210d445
+      size: 2673
     params:
       params.yaml:
-        general.bank_id: A
+        general.bank_id: E
         general.train_method: xgbclassifier
     outs:
-    - path: evaluate/score_xgbclassifier_A.json
+    - path: evaluate/score_xgbclassifier_E.json
       hash: md5
-      md5: 375ecfa1f9cef7c94b714f8a4e477aa9
+      md5: 5fbe011e9b0a2751c3323f44d4f9d924
       size: 32
