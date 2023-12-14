@@ -1,26 +1,63 @@
+#! python
+# -*- coding: UTF-8 -*-
 import os
 import sys
 import pickle
 import json
-
+import yaml
 import pandas as pd
+from sklearn.metrics import classification_report, f1_score
+from pathlib import Path
 
-if len(sys.argv) != 3:
-    sys.stderr.write("Arguments error. Usage:\n")
-    sys.stderr.write("\tpython evaluate.py data-file model\n")
-    sys.exit(1)
 
-df = pd.read_csv(sys.argv[1], header=None)
-X = df.iloc[:,[1,2,3]]
-y = df.iloc[:,0]
+if __name__ == "__main__":
+    # stage_name = "evaluate"
+    stage_name = Path(sys.argv[0]).stem
 
-with open(sys.argv[2], "rb") as fd:
-    clf = pickle.load(fd)
+    if len(sys.argv) != 4:
+        sys.stderr.write("Arguments error. Usage:\n")
+        sys.stderr.write(f"\tpython3 {stage_name}.py data-file  model json-file\n")
+        sys.exit(1)
 
-score = clf.score(X, y)
+    # Название файла загружаемого датасета
+    f_input = sys.argv[1]
+    f_model = sys.argv[2]
+    f_evaluate = sys.argv[3]
 
-prc_file = os.path.join("evaluate", "score.json")
-os.makedirs(os.path.join("evaluate"), exist_ok=True)
+    # %% Задание каталогов
+    # Выбрать вариант в зависимости от операционной системы и способа запуска
+    # project_path = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, os.path.pardir))
+    project_path = os.getcwd()
+    model_dir = os.path.join(project_path, "models")
+    evaluate_dir = os.path.join(project_path, "evaluate")
 
-with open(prc_file, "w") as fd:
-    json.dump({"score": score}, fd)
+    # %% Создание каталогов
+    os.makedirs(evaluate_dir, exist_ok=True)
+    os.makedirs(model_dir, exist_ok=True)
+
+    # Загрузка параметров расчета
+    params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))
+    bank_id = params["general"]["bank_id"]
+
+    # %% Задание путей для файлов
+    filename_input = os.path.join(project_path, f_input)
+    filename_model = os.path.join(model_dir, f_model)
+    filename_evaluate = os.path.join(evaluate_dir, f_evaluate)
+
+    # %% Чтение файла данных
+    test_data = pd.read_csv(filename_input, sep=';')
+    with open(filename_model, "rb") as fd:
+        clf = pickle.load(fd)
+
+    # Подготовка датасета
+    x_test = test_data.drop('Y', axis=1)
+    y_test = test_data['Y']
+
+    score = clf.score(x_test, y_test)
+    preds = clf.predict(x_test)
+    f1 = classification_report(y_test, preds, target_names=['negative', 'positive'], zero_division=True)
+    print(f1)
+    f1_micro = f1_score(y_test, preds, average="micro")
+
+    with open(filename_evaluate, "w") as fd:
+        json.dump({"micro_f1": f1_micro}, fd)

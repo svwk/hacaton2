@@ -4,7 +4,8 @@ from dateutil.relativedelta import relativedelta
 
 DEFAULT_CAT = 'Нет стажа'
 
-seniority_values = {
+# Исходные категории стажа
+SENIORITY_VALUES = {
     'Нет стажа': range(0, 1),
     'менее 4 месяцев': range(1, 4),
     '4 - 6 месяцев': range(4, 6),
@@ -21,7 +22,8 @@ seniority_values = {
     '10 и более лет': range(120, 1000),
 }
 
-new_seniority_values = {
+# Новые категории стажа
+NEW_SENIORITY_VALUES = {
     'Нет стажа': range(0, 1),
     'Менее 6 месяцев': range(1, 6),
     'Менее 2 лет': range(6, 24),
@@ -34,16 +36,16 @@ new_seniority_values = {
 def months_seniority_to_cat(numeric_value):
     """
     Конвертация числового значения стажа в строковое
-    представление категории стажа
+    представление исходной категории стажа
     :param numeric_value: стаж (количество месяцев)
-    :return строковое представление категории стажа
+    :return строковое представление исходной категории стажа
     """
     if numeric_value is None:
         return None
 
     numeric_value = int(numeric_value)
 
-    for key, value_range in seniority_values.items():
+    for key, value_range in SENIORITY_VALUES.items():
         if numeric_value in value_range:
             return key
 
@@ -62,7 +64,7 @@ def months_seniority_to_new_cat(numeric_value):
 
     numeric_value = int(numeric_value)
 
-    for key, value_range in new_seniority_values.items():
+    for key, value_range in NEW_SENIORITY_VALUES.items():
         if numeric_value in value_range:
             return key
 
@@ -71,19 +73,24 @@ def months_seniority_to_new_cat(numeric_value):
 
 def seniority_cat_to_month_count(str_value):
     """
-    Конвертация строкового представления категории стажа
+    Конвертация строкового представления исходной категории стажа
     в количество месяцев
-    :param str_value:  строковое представление категории стажа
+    :param str_value:  строковое представление исходной категории стажа
     :return стаж (количество месяцев)
     """
 
     str_value = str(str_value)
-    range_value = seniority_values.get(str_value, seniority_values[DEFAULT_CAT])
+    range_value = SENIORITY_VALUES.get(str_value, SENIORITY_VALUES[DEFAULT_CAT])
 
     return max(range_value)
 
 
 def set_last_seniority(application_data):
+    """
+    Вычисление стажа работы на последнем месте в месяцах
+    :param application_data:  Данные заявки
+    :return: Стаж работы на последнем месте в месяцах
+    """
     if not pd.isna(application_data['JobStartDate']):
         last_seniority = relativedelta(datetime.today(), application_data['JobStartDate'])
         # Стаж работы на последнем месте в месяцах
@@ -93,12 +100,22 @@ def set_last_seniority(application_data):
 
 
 def set_last_seniority_cat(application_data):
+    """
+    Вычисление категории стажа работы на последнем месте
+    :param application_data:  Данные заявки
+    :return: Исходная категория стажа работы на последнем месте
+    """
     last_seniority = set_last_seniority(application_data)
 
     return months_seniority_to_cat(last_seniority)
 
 
 def set_last_seniority_new_cat(application_data):
+    """
+    Вычисление новой категории стажа работы на последнем месте
+    :param application_data:  Данные заявки
+    :return: Новая категория стажа работы на последнем месте
+    """
     last_seniority = set_last_seniority(application_data)
 
     return months_seniority_to_new_cat(last_seniority)
