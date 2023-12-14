@@ -8,13 +8,14 @@ import pandas as pd
 
 
 def train_stage(stage_name, train_function, params_function):
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         sys.stderr.write("Arguments error. Usage:\n")
-        sys.stderr.write(f"\tpython3 {stage_name}.py data-file\n")
+        sys.stderr.write(f"\tpython3 bank_id {stage_name}.py data-file\n")
         sys.exit(1)
 
     # Название файла загружаемого датасета
-    f_input = sys.argv[1]
+    f_input = sys.argv[2]
+    bank_id = sys.argv[1]
 
     # %% Задание каталогов
     # Выбрать вариант в зависимости от операционной системы и способа запуска
@@ -24,7 +25,6 @@ def train_stage(stage_name, train_function, params_function):
 
     # Загрузка параметров расчета
     params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))
-    bank_id = params["general"]["bank_id"]
 
     # %% Задание путей для файлов
     filename_input = os.path.join(project_path, f_input)

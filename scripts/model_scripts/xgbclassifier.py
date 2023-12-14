@@ -4,13 +4,11 @@
 Обучение с помощью XGBClassifier
 """
 
-import sys
 from dataclasses import dataclass
-import pandas as pd
 from pathlib import Path
 from xgboost import XGBClassifier
 
-import train
+from .train import *
 
 
 @dataclass
@@ -37,12 +35,12 @@ def train_model(dataset: pd.DataFrame, tree_params: TreeParams):
     :return: Обученная модель
     """
     # Подготовка датасета
-    X_train = dataset.drop('Y', axis=1)
+    x_train = dataset.drop('Y', axis=1)
     y_train = dataset['Y']
 
     # Если балансируем классы, то на выходе ~0,34 accuracy параметр для балансировки class_weight="balanced"
     # clf = DecisionTreeClassifier(max_depth=max_depth, max_features="auto", criterion="log_loss", max_leaf_nodes=0.5)
-    # clf.fit(X_train, y_train)
+    # clf.fit(x_train, y_train)
 
     # Create and train the XGBoost model
     model = XGBClassifier(
@@ -56,7 +54,7 @@ def train_model(dataset: pd.DataFrame, tree_params: TreeParams):
         scale_pos_weight=tree_params.scale_pos_weight)
 
     # Fit the model
-    model.fit(X_train, y_train)
+    model.fit(x_train, y_train)
 
     return model
 
@@ -78,5 +76,5 @@ def get_train_params(params_yaml):
 
 
 if __name__ == "__main__":
-    stage_name = Path(sys.argv[0]).stem  # xgbclassifier
-    train.train_stage(stage_name, train_model, get_train_params)
+    stage_name = Path(sys.argv[0]).stem
+    train_stage(stage_name, train_model, get_train_params)

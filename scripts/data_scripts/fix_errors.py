@@ -6,10 +6,9 @@ import pandas as pd
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
-from data_methods import create_stage
-from utils.seniority_cats import months_seniority_to_cat, seniority_cat_to_month_count
-from utils.seniority_cats import set_last_seniority
-
+from .data_methods import create_stage
+from .utils.seniority_cats import months_seniority_to_cat, seniority_cat_to_month_count
+from .utils.seniority_cats import set_last_seniority
 
 # Прожиточный минимум
 ADULT_LIVING_WAGE = 15669
@@ -117,8 +116,8 @@ def fix_seniority(application_data):
         # Корректировка стажа на последнем рабочем  месте
         if new_last_seniority != last_seniority_in_months:
             application_data['JobStartDate'] = datetime.strftime((date.today() -
-                    relativedelta(months=new_last_seniority)),
-                                            "%Y-%m-%d %H:%M:%S")
+                                                                  relativedelta(months=new_last_seniority)),
+                                                                 "%Y-%m-%d %H:%M:%S")
 
     # Корректировка общего стажа
     if new_total_seniority != total_seniority_in_months:

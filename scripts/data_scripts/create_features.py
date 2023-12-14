@@ -1,19 +1,26 @@
 #! python
 # -*- coding: UTF-8 -*-
-
-import pandas as pd
 import numpy as np
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
-from data_methods import create_stage
-import utils.seniority_cats as sc
+from .data_methods import create_stage
+from .utils.seniority_cats import *
+
+
+CATEGORIES_MERCH = list(range(1, 90))
 
 DECISION_CATEGORIES = ['denied', 'success', 'error']
 
 CHILDCOUNT_CATEGORIES = ['Без детей', '1 ребенок', '2 и более детей']
 
 EDUCATION_CATEGORIES = ['Среднее', 'Среднее профессиональное', 'Высшее']
+
+GOODS_CATEGORIES = ["Furniture", "Mobile_devices", "Travel", "Medical_services", "Education", "Fitness", "Other"]
+
+EMPLOYMENT_CATEGORIES = ["Работаю по найму", "Собственное дело", "Иные виды"]
+
+LOAN_TERM_CATEGORIES = [6, 12, 18, 24]
+
+FAMILY_STATUS_CATEGORIES = ["Никогда в браке не состоял(а)", "Женат / замужем", "Разведён / Разведена"]
 
 # Новые категории для признаков
 SENIORITY_CATEGORIES = ['Нет стажа', 'Менее  6 месяцев', 'Менее 2 лет',
@@ -28,106 +35,137 @@ def create_features_in_dataset(source_dataset):
 
     df = source_dataset.copy()
 
+    df = replace_features(df)
+    df = replace_targets(df)
+
+    return df
+
+
+def replace_targets(dataset):
+    """
+    Преобразует и переименовывает целевые параметры
+    :param dataset:  Исходный датасет
+    :return: Преобразованный датасет
+    """
+
+    dataset['Решение_банка_A'] = pd.Categorical(dataset['BankA_decision'],
+                                                categories=DECISION_CATEGORIES,
+                                                ordered=True)
+    dataset['Решение_банка_B'] = pd.Categorical(dataset['BankB_decision'],
+                                                categories=DECISION_CATEGORIES,
+                                                ordered=True)
+    dataset['Решение_банка_C'] = pd.Categorical(dataset['BankC_decision'],
+                                                categories=DECISION_CATEGORIES,
+                                                ordered=True)
+    dataset['Решение_банка_D'] = pd.Categorical(dataset['BankD_decision'],
+                                                categories=DECISION_CATEGORIES,
+                                                ordered=True)
+    dataset['Решение_банка_E'] = pd.Categorical(dataset['BankE_decision'],
+                                                categories=DECISION_CATEGORIES,
+                                                ordered=True)
+    dataset['Решение_банка_A'] = dataset['Решение_банка_A'].cat.codes
+    dataset['Решение_банка_B'] = dataset['Решение_банка_B'].cat.codes
+    dataset['Решение_банка_C'] = dataset['Решение_банка_C'].cat.codes
+    dataset['Решение_банка_D'] = dataset['Решение_банка_D'].cat.codes
+    dataset['Решение_банка_E'] = dataset['Решение_банка_E'].cat.codes
+
+    # Удаление более ненужных признаков
+    dataset = dataset.drop(columns=['BankA_decision', 'BankB_decision', 'BankC_decision',
+                                    'BankD_decision', 'BankE_decision'])
+
+    return dataset
+
+
+def replace_features(dataset):
+    """
+    Преобразует и переименовывает признаки
+    :param dataset:  Исходный датасет
+    :return: Преобразованный датасет
+
+    """
+
     # Создание новых числовых и бинарных признаков
+    dataset['Имеет_доход'] = (
+            (pd.notna(dataset['JobStartDate'])) & (dataset['employment status'] != "Не работаю")).astype('int')
 
-    df['Имеет_доход'] = ((pd.notna(df['JobStartDate'])) & (df['employment status'] != "Не работаю")).astype('int')
-
-    df['Кредитная_нагрузка'] = (df['MonthProfit'] - df['MonthExpense']) / (df['Loan_amount'] / df['Loan_term'])
+    dataset['Кредитная_нагрузка'] = (dataset['MonthProfit'] - dataset['MonthExpense']) / (
+            dataset['Loan_amount'] / dataset['Loan_term'])
     # df['Кредитная_нагрузка'] = np.where(df['Кредитная_нагрузка'] < 0, 0, df['Кредитная_нагрузка'])
-    df['Кредит_возможен'] = np.where(df['Кредитная_нагрузка'] > 1.25, 1, 0)
 
-    df['Возраст'] = df['BirthDate'].apply(lambda r: relativedelta(datetime.today(), r).years)
+    dataset['Кредит_возможен'] = np.where(dataset['Кредитная_нагрузка'] > 1.25, 1, 0)
+
+    dataset['Возраст'] = dataset['BirthDate'].apply(lambda r: relativedelta(datetime.today(), r).years)
 
     # Создание новых категориальных признаков
 
     # Стаж работы на последнем месте в месяцах
-    last_seniority = df.apply(sc.set_last_seniority_new_cat, axis=1)
-    df['Последний_стаж_работы'] = pd.Categorical(last_seniority, ordered=True,
-                                                 categories=SENIORITY_CATEGORIES)
-    last_seniority = pd.get_dummies(df['Последний_стаж_работы'], prefix="Посл_стаж", dtype=int)
-    df['Код_Последний_стаж_работы'] = df['Последний_стаж_работы'].cat.codes
+    last_seniority = dataset.apply(set_last_seniority_new_cat, axis=1)
+    dataset['Последний_стаж_работы'] = pd.Categorical(last_seniority, ordered=True,
+                                                      categories=SENIORITY_CATEGORIES)
+    last_seniority = pd.get_dummies(dataset['Последний_стаж_работы'], prefix="Посл_стаж", dtype=int)
+    dataset['Код_Последний_стаж_работы'] = dataset['Последний_стаж_работы'].cat.codes
 
-    df['Категория_товара'] = pd.Categorical(df['Goods_category'], ordered=True)
-    df['Код_Категория_товара'] = df['Категория_товара'].cat.codes
-    goods_category = pd.get_dummies(df['Категория_товара'], prefix="Кат_товара", dtype=int)
+    dataset['Категория_товара'] = pd.Categorical(dataset['Goods_category'], ordered=True, categories=GOODS_CATEGORIES)
+    dataset['Код_Категория_товара'] = dataset['Категория_товара'].cat.codes
+    goods_category = pd.get_dummies(dataset['Категория_товара'], prefix="Кат_товара", dtype=int)
 
-    merch_code = pd.get_dummies(df['Merch_code'], prefix="код_магазина", dtype=int)
+    dataset['Код_магазина'] = pd.Categorical(dataset['Merch_code'], ordered=True, categories=CATEGORIES_MERCH)
+    merch_codes = pd.get_dummies(dataset['Код_магазина'], prefix="код_магазина", dtype=int)
 
-    df['Family status'] = df['Family status'].apply(replace_family_status)
-    df['Семейное_положение'] = pd.Categorical(df['Family status'], ordered=True)
-    df['Код_Семейное_положение'] = df['Семейное_положение'].cat.codes
-    family_status = pd.get_dummies(df['Семейное_положение'], prefix="Сем_положение", dtype=int)
+    dataset['Family status'] = dataset['Family status'].apply(replace_family_status)
+    dataset['Семейное_положение'] = pd.Categorical(dataset['Family status'], ordered=True,
+                                                   categories=FAMILY_STATUS_CATEGORIES)
+    dataset['Код_Семейное_положение'] = dataset['Семейное_положение'].cat.codes
+    family_status = pd.get_dummies(dataset['Семейное_положение'], prefix="Сем_положение", dtype=int)
 
-    df['education'] = df['education'].apply(replace_education)
-    df['Образование'] = pd.Categorical(df['education'], ordered=True,
-                                       categories=EDUCATION_CATEGORIES)
-    df['Код_Образование'] = df['Образование'].cat.codes
-    education = pd.get_dummies(df['Образование'], prefix="Образование", dtype=int)
+    dataset['education'] = dataset['education'].apply(replace_education)
+    dataset['Образование'] = pd.Categorical(dataset['education'], ordered=True,
+                                            categories=EDUCATION_CATEGORIES)
+    dataset['Код_Образование'] = dataset['Образование'].cat.codes
+    education = pd.get_dummies(dataset['Образование'], prefix="Образование", dtype=int)
 
-    df['employment status'] = df['employment status'].apply(replace_employment_status)
-    df['Тип_занятости'] = pd.Categorical(df['employment status'], ordered=True)
-    df['Код_Тип_занятости'] = df['Тип_занятости'].cat.codes
-    employment_status = pd.get_dummies(df['Тип_занятости'], prefix="Занятость", dtype=int)
+    dataset['employment status'] = dataset['employment status'].apply(replace_employment_status)
+    dataset['Тип_занятости'] = pd.Categorical(dataset['employment status'], ordered=True,
+                                              categories=EMPLOYMENT_CATEGORIES)
+    dataset['Код_Тип_занятости'] = dataset['Тип_занятости'].cat.codes
+    employment_status = pd.get_dummies(dataset['Тип_занятости'], prefix="Занятость", dtype=int)
 
-    df['Value'] = df['Value'].apply(replace_seniority)
-    df['Стаж_работы'] = pd.Categorical(df['Value'], ordered=True, categories=SENIORITY_CATEGORIES)
-    df['Код_Стаж_работы'] = df['Стаж_работы'].cat.codes
-    value = pd.get_dummies(df['Стаж_работы'], prefix="Общий_стаж", dtype=int)
+    dataset['Value'] = dataset['Value'].apply(replace_seniority)
+    dataset['Стаж_работы'] = pd.Categorical(dataset['Value'], ordered=True, categories=SENIORITY_CATEGORIES)
+    dataset['Код_Стаж_работы'] = dataset['Стаж_работы'].cat.codes
+    value = pd.get_dummies(dataset['Стаж_работы'], prefix="Общий_стаж", dtype=int)
 
-    df['Срок_кредита'] = pd.Categorical(df['Loan_term'], ordered=True)
-    loan_term = pd.get_dummies(df['Срок_кредита'], prefix="Срок_кредита", dtype=int)
+    dataset['Срок_кредита'] = pd.Categorical(dataset['Loan_term'], ordered=True, categories=LOAN_TERM_CATEGORIES)
+    loan_term = pd.get_dummies(dataset['Срок_кредита'], prefix="Срок_кредита", dtype=int)
 
-    df['Колво_детей'] = df['ChildCount'].apply(replace_childcount)
-    df['Колво_детей'] = pd.Categorical(df['Колво_детей'], ordered=True,
-                                       categories=CHILDCOUNT_CATEGORIES)
-    df['Код_Колво_детей'] = df['Колво_детей'].cat.codes
-    child_count = pd.get_dummies(df['Колво_детей'], prefix="Колво_детей", dtype=int)
+    dataset['Колво_детей'] = dataset['ChildCount'].apply(replace_childcount)
+    dataset['Колво_детей'] = pd.Categorical(dataset['Колво_детей'], ordered=True,
+                                            categories=CHILDCOUNT_CATEGORIES)
+    dataset['Код_Колво_детей'] = dataset['Колво_детей'].cat.codes
+    child_count = pd.get_dummies(dataset['Колво_детей'], prefix="Колво_детей", dtype=int)
 
-    df = pd.concat(
-        [df, value, education, employment_status, family_status, loan_term, goods_category,
-         merch_code, last_seniority, child_count],
+    # Добавление кодированных признаков
+    dataset = pd.concat(
+        [dataset, value, education, employment_status, family_status, loan_term,
+         goods_category, merch_codes, last_seniority, child_count],
         axis=1
     )
 
-    df['Решение_банка_A'] = pd.Categorical(df['BankA_decision'],
-                                           categories=DECISION_CATEGORIES,
-                                           ordered=True)
-    df['Решение_банка_B'] = pd.Categorical(df['BankB_decision'],
-                                           categories=DECISION_CATEGORIES,
-                                           ordered=True)
-    df['Решение_банка_C'] = pd.Categorical(df['BankC_decision'],
-                                           categories=DECISION_CATEGORIES,
-                                           ordered=True)
-    df['Решение_банка_D'] = pd.Categorical(df['BankD_decision'],
-                                           categories=DECISION_CATEGORIES,
-                                           ordered=True)
-    df['Решение_банка_E'] = pd.Categorical(df['BankE_decision'],
-                                           categories=DECISION_CATEGORIES,
-                                           ordered=True)
-
-    df['Решение_банка_A'] = df['Решение_банка_A'].cat.codes
-    df['Решение_банка_B'] = df['Решение_банка_B'].cat.codes
-    df['Решение_банка_C'] = df['Решение_банка_C'].cat.codes
-    df['Решение_банка_D'] = df['Решение_банка_D'].cat.codes
-    df['Решение_банка_E'] = df['Решение_банка_E'].cat.codes
-
     # Удаление более ненужных признаков
-    df = df.drop(columns=['BirthDate', 'JobStartDate', 'Goods_category',
-                          'Family status', 'education', 'employment status', 'Value', 'Loan_term',
-                          'ChildCount', 'BankA_decision', 'BankB_decision', 'BankC_decision',
-                          'BankD_decision', 'BankE_decision'])
+    dataset = dataset.drop(columns=['BirthDate', 'JobStartDate', 'Goods_category',
+                                    'Family status', 'education', 'employment status', 'Value', 'Loan_term',
+                                    'ChildCount'])
 
     # Переименование признаков в более человекопонятные
-    df = df.rename(columns={
+    dataset = dataset.rename(columns={
         'MonthProfit': 'Ежемесячный_доход',
         'MonthExpense': 'Ежемесячный_расход',
         'Loan_amount': 'Сумма_заказа',
-        'Merch_code': 'Код_магазина',
         'Gender': 'Пол',
         'SNILS': 'СНИЛС'
     })
 
-    return df
+    return dataset
 
 
 def replace_family_status(old_value):
@@ -189,9 +227,10 @@ def replace_seniority(old_value):
     :param old_value: Старое значение признака 'стаж работы'
     :return: Новое значение категории признака 'стаж работы'
     """
+
     # Общий стаж в месяцах
-    total_seniority_in_months = int(sc.seniority_cat_to_month_count(old_value))
-    return sc.months_seniority_to_new_cat(total_seniority_in_months)
+    total_seniority_in_months = int(seniority_cat_to_month_count(old_value))
+    return months_seniority_to_new_cat(total_seniority_in_months)
 
 
 if __name__ == "__main__":

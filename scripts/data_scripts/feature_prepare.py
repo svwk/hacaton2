@@ -89,13 +89,14 @@ def to_polynom(x, order=2):
 if __name__ == "__main__":
     stage_name = "feature_prepare"
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) !=3:
         sys.stderr.write("Arguments error. Usage:\n")
-        sys.stderr.write(f"\tpython3 {stage_name}.py data-file\n")
+        sys.stderr.write(f"\tpython3 bank_id  {stage_name}.py data-file\n")
         sys.exit(1)
 
     # Название файла загружаемого датасета
-    f_input = sys.argv[1]
+    f_input = sys.argv[2]
+    bank_id = sys.argv[1]
 
     # %% Задание каталогов
     project_path = os.getcwd()
@@ -105,10 +106,6 @@ if __name__ == "__main__":
     # %% Создание каталогов
     os.makedirs(stage_dir, exist_ok=True)
     os.makedirs(model_dir, exist_ok=True)
-
-    # Загрузка параметров расчета
-    params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))["general"]
-    bank_id = params["bank_id"]
 
     # %% Задание путей для файлов
     filename_input = os.path.join(project_path, f_input)

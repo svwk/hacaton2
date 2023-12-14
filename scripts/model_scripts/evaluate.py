@@ -4,25 +4,24 @@ import os
 import sys
 import pickle
 import json
-import yaml
 import pandas as pd
 from sklearn.metrics import classification_report, f1_score
 from pathlib import Path
 
 
 if __name__ == "__main__":
-    # stage_name = "evaluate"
     stage_name = Path(sys.argv[0]).stem
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         sys.stderr.write("Arguments error. Usage:\n")
-        sys.stderr.write(f"\tpython3 {stage_name}.py data-file  model json-file\n")
+        sys.stderr.write(f"\tpython3 bank_id {stage_name}.py data-file  model json-file\n")
         sys.exit(1)
 
     # Название файла загружаемого датасета
-    f_input = sys.argv[1]
-    f_model = sys.argv[2]
-    f_evaluate = sys.argv[3]
+    f_input = sys.argv[2]
+    f_model = sys.argv[3]
+    f_evaluate = sys.argv[4]
+    bank_id = sys.argv[1]
 
     # %% Задание каталогов
     # Выбрать вариант в зависимости от операционной системы и способа запуска
@@ -34,10 +33,6 @@ if __name__ == "__main__":
     # %% Создание каталогов
     os.makedirs(evaluate_dir, exist_ok=True)
     os.makedirs(model_dir, exist_ok=True)
-
-    # Загрузка параметров расчета
-    params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))
-    bank_id = params["general"]["bank_id"]
 
     # %% Задание путей для файлов
     filename_input = os.path.join(project_path, f_input)

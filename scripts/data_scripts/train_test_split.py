@@ -18,15 +18,15 @@ def separate_bank_dataset(source_dataset, target_name, p_split_ratio, random_sta
     :return: Два дата-фрейма с обучающими и тестовыми данными
     """
 
-    X = source_dataset.drop(target_name, axis=1)
+    x = source_dataset.drop(target_name, axis=1)
     y = source_dataset[target_name]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=p_split_ratio,
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=p_split_ratio,
                                                         random_state=random_state,
                                                         stratify=y)
 
-    df_train = pd.concat([X_train, y_train], axis=1)
-    df_test = pd.concat([X_test, y_test], axis=1)
+    df_train = pd.concat([x_train, y_train], axis=1)
+    df_test = pd.concat([x_test, y_test], axis=1)
 
     return df_train, df_test
 
@@ -34,13 +34,14 @@ def separate_bank_dataset(source_dataset, target_name, p_split_ratio, random_sta
 if __name__ == "__main__":
     stage_name = "train_test_split"
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         sys.stderr.write("Arguments error. Usage:\n")
-        sys.stderr.write(f"\tpython3 {stage_name}.py data-file\n")
+        sys.stderr.write(f"\tpython3 bank_id {stage_name}.py data-file\n")
         sys.exit(1)
 
     # Название файла загружаемого датасета
-    f_input = sys.argv[1]
+    f_input = sys.argv[2]
+    bank_id = sys.argv[1]
 
     # %% Задание путей для файлов
     project_path = os.getcwd()
@@ -54,7 +55,6 @@ if __name__ == "__main__":
     params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))
     split_ratio = params["split"]["split_ratio"]
     random_state = params["split"]["random_state"]
-    bank_id = params["general"]["bank_id"]
 
     # %% Чтение файла данных
     df = pd.read_csv(filename_input, sep=';')

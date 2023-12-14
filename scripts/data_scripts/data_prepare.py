@@ -4,7 +4,7 @@
 import pandas as pd
 import numpy as np
 
-from data_methods import create_stage
+from .data_methods import create_stage
 
 
 def prepare_dataset(source_dataset):
