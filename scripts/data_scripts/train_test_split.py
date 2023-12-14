@@ -34,13 +34,14 @@ def separate_bank_dataset(source_dataset, target_name, p_split_ratio, random_sta
 if __name__ == "__main__":
     stage_name = "train_test_split"
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         sys.stderr.write("Arguments error. Usage:\n")
-        sys.stderr.write(f"\tpython3 {stage_name}.py data-file\n")
+        sys.stderr.write(f"\tpython3 bank_id {stage_name}.py data-file\n")
         sys.exit(1)
 
     # Название файла загружаемого датасета
-    f_input = sys.argv[1]
+    f_input = sys.argv[2]
+    bank_id = sys.argv[1]
 
     # %% Задание путей для файлов
     project_path = os.getcwd()
@@ -54,7 +55,6 @@ if __name__ == "__main__":
     params = yaml.safe_load(open(os.path.join(project_path, "params.yaml")))
     split_ratio = params["split"]["split_ratio"]
     random_state = params["split"]["random_state"]
-    bank_id = params["general"]["bank_id"]
 
     # %% Чтение файла данных
     df = pd.read_csv(filename_input, sep=';')

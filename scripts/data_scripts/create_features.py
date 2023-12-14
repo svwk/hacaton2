@@ -5,6 +5,7 @@ import numpy as np
 from .data_methods import create_stage
 from .utils.seniority_cats import *
 
+
 CATEGORIES_MERCH = list(range(1, 90))
 
 DECISION_CATEGORIES = ['denied', 'success', 'error']
