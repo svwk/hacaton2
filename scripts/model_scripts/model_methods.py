@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 
 project_path = os.getcwd()
 
+
 # %% Загрузим, обучим и сохраним модель
 def train_model(train_dataset):
     """
@@ -26,6 +27,7 @@ def train_model(train_dataset):
     model = LogisticRegression(max_iter=100_000).fit(x_train, y_train)
 
     return model
+
 
 def clear_train_test_data_frame(df, bank):
     out = df.drop(f'решение банка {bank}', axis=1)
@@ -45,19 +47,3 @@ def clear_train_test_data_frame(df, bank):
     out = out.drop('последний стаж код', axis=1)
 
     return out
-
-
-# def test_model(test_dataset, model):
-#     """
-#     Проверка модели
-#     :param test_dataset:  Тестовый набор данных
-#     :param model: Проверяемая модель
-#     """
-#     target_column_name = "z"
-#     y_test = test_dataset[target_column_name].values
-#     xy_test = test_dataset.drop(target_column_name, axis=1).values
-#
-#     accuracy = model.score(xy_test, y_test)
-#     print(f'{mc.MODEL_TEST_ACCURACY}: {accuracy:.3f}')
-#
-#     return accuracy

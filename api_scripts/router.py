@@ -15,6 +15,7 @@ async def root():
 def predict(client: ClientData) -> BankDecisions:
     """Предсказание вероятности одобрения банком клиента
     - **client**: данные клиента для оценивания
+    :return: предсказание одобрения банками
     """
     predictions = model_predict(client)
     return predictions

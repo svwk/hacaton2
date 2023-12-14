@@ -33,12 +33,12 @@ def train_model(dataset: pd.DataFrame, mlp_params: MLPParams):
     :return: Обученная модель
     """
     # Подготовка датасета
-    X_train = dataset.drop('Y', axis=1)
+    x_train = dataset.drop('Y', axis=1)
     y_train = dataset['Y']
 
     # Так как данные не сбалансированы, применяем метод балансировки
     nm = NearMiss()
-    X_train_miss, Y_train_miss = nm.fit_resample(X_train, y_train)
+    x_train_miss, y_train_miss = nm.fit_resample(x_train, y_train)
 
     # Create and train model
     model = MLPClassifier(
@@ -48,7 +48,7 @@ def train_model(dataset: pd.DataFrame, mlp_params: MLPParams):
         learning_rate_init=mlp_params.learning_rate)
 
     # Fit the model
-    model.fit(X_train_miss, Y_train_miss)
+    model.fit(x_train_miss, y_train_miss)
 
     return model
 

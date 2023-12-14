@@ -25,13 +25,13 @@ def train_model(dataset: pd.DataFrame, train_params: LogRegParams):
     """
 
     # Подготовка датасета
-    X_train = dataset.drop('Y', axis=1)
+    x_train = dataset.drop('Y', axis=1)
     y_train = dataset['Y']
 
     model = LogisticRegression(
         max_iter=train_params.max_iter
     )
-    model.fit(X_train, y_train)
+    model.fit(x_train, y_train)
 
     return model
 

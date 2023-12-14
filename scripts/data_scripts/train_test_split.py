@@ -18,15 +18,15 @@ def separate_bank_dataset(source_dataset, target_name, p_split_ratio, random_sta
     :return: Два дата-фрейма с обучающими и тестовыми данными
     """
 
-    X = source_dataset.drop(target_name, axis=1)
+    x = source_dataset.drop(target_name, axis=1)
     y = source_dataset[target_name]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=p_split_ratio,
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=p_split_ratio,
                                                         random_state=random_state,
                                                         stratify=y)
 
-    df_train = pd.concat([X_train, y_train], axis=1)
-    df_test = pd.concat([X_test, y_test], axis=1)
+    df_train = pd.concat([x_train, y_train], axis=1)
+    df_test = pd.concat([x_test, y_test], axis=1)
 
     return df_train, df_test
 
