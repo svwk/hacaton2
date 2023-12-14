@@ -1,12 +1,10 @@
 #! python
 # -*- coding: UTF-8 -*-
-import sys
-import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from pathlib import Path
 from dataclasses import dataclass
 
-import train
+from .train import *
 
 
 @dataclass
@@ -50,5 +48,5 @@ def get_train_params(params_yaml):
 
 
 if __name__ == "__main__":
-    stage_name = Path(sys.argv[0]).stem  # xgbclassifier
-    train.train_stage(stage_name, train_model, get_train_params)
+    stage_name = Path(sys.argv[0]).stem
+    train_stage(stage_name, train_model, get_train_params)

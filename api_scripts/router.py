@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from api.models import ClientData, BankDecisions
+from api_scripts.models import ClientData, BankDecisions
 from scripts.model_scripts.predict import predict as model_predict
 
 api_router = APIRouter()

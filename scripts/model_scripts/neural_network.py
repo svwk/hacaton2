@@ -4,14 +4,12 @@
 Обучение с помощью нейронной сети
 """
 
-import sys
 from dataclasses import dataclass
-import pandas as pd
 from pathlib import Path
 from sklearn.neural_network import MLPClassifier
 from imblearn.under_sampling import NearMiss
 
-import train
+from .train import *
 
 
 @dataclass
@@ -72,4 +70,4 @@ def get_train_params(params_yaml):
 
 if __name__ == "__main__":
     stage_name = Path(sys.argv[0]).stem
-    train.train_stage(stage_name, train_model, get_train_params)
+    train_stage(stage_name, train_model, get_train_params)

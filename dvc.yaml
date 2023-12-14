@@ -1,6 +1,6 @@
 stages:
   fill_na:
-      cmd: python scripts/data_scripts/fill_na.py data/raw/SF_Mandarin_dataset_ver3_csv.csv
+      cmd: python -m scripts.data_scripts.fill_na data/raw/SF_Mandarin_dataset_ver3_csv.csv
       deps:
         - data/raw/SF_Mandarin_dataset_ver3_csv.csv
         - scripts/data_scripts/fill_na.py
@@ -9,7 +9,7 @@ stages:
         - data/stage_fill_na/dataset.csv
 
   data_prepare:
-    cmd: python scripts/data_scripts/data_prepare.py data/stage_fill_na/dataset.csv
+    cmd: python -m scripts.data_scripts.data_prepare data/stage_fill_na/dataset.csv
     deps:
       - data/stage_fill_na/dataset.csv
       - scripts/data_scripts/data_prepare.py
@@ -19,7 +19,7 @@ stages:
       - data/stage_data_prepare/dataset.csv
 
   fix_errors:
-    cmd: python scripts/data_scripts/fix_errors.py data/stage_data_prepare/dataset.csv
+    cmd: python -m scripts.data_scripts.fix_errors data/stage_data_prepare/dataset.csv
     deps:
       - data/stage_data_prepare/dataset.csv
       - scripts/data_scripts/fix_errors.py
@@ -31,7 +31,7 @@ stages:
       - data/stage_fix_errors/dataset.csv
 
   create_features:
-    cmd: python scripts/data_scripts/create_features.py data/stage_fix_errors/dataset.csv
+    cmd: python -m scripts.data_scripts.create_features data/stage_fix_errors/dataset.csv
     deps:
     - data/stage_fix_errors/dataset.csv
     - scripts/data_scripts/create_features.py
@@ -44,7 +44,7 @@ stages:
     - data/stage_create_features/dataset.csv
 
   feature_prepare:
-    cmd: python scripts/data_scripts/feature_prepare.py data/stage_create_features/dataset.csv
+    cmd: python -m scripts.data_scripts.feature_prepare data/stage_create_features/dataset.csv
     deps:
       - data/stage_create_features/dataset.csv
       - scripts/data_scripts/create_features.py
@@ -61,7 +61,7 @@ stages:
       - models/scaler_${general.bank_id}.pkl
 
   train_test_split:
-    cmd: python scripts/data_scripts/train_test_split.py data/stage_feature_prepare/dataset_${general.bank_id}.csv
+    cmd: python -m scripts.data_scripts.train_test_split data/stage_feature_prepare/dataset_${general.bank_id}.csv
     deps:
     - data/stage_feature_prepare/dataset_${general.bank_id}.csv
     - scripts/data_scripts/train_test_split.py
@@ -80,10 +80,11 @@ stages:
     - data/stage_train_test_split/test_${general.bank_id}.csv
 
   train:
-    cmd: python scripts/model_scripts/${general.train_method}.py data/stage_train_test_split/train_${general.bank_id}.csv
+    cmd: python -m scripts.model_scripts.${general.train_method} data/stage_train_test_split/train_${general.bank_id}.csv
     deps:
       - data/stage_train_test_split/train_${general.bank_id}.csv
       - scripts/model_scripts/${general.train_method}.py
+      - scripts/model_scripts/train.py
       - scripts/data_scripts/train_test_split.py
       - scripts/data_scripts/feature_prepare.py
       - scripts/data_scripts/fill_na.py
@@ -111,12 +112,13 @@ stages:
       - models/model_${general.train_method}_${general.bank_id}.pkl
 
   evaluate:
-    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${general.bank_id}.csv model_${general.train_method}_${general.bank_id}.pkl score_${general.train_method}_${general.bank_id}.json
+    cmd: python -m scripts.model_scripts.evaluate data/stage_train_test_split/test_${general.bank_id}.csv model_${general.train_method}_${general.bank_id}.pkl score_${general.train_method}_${general.bank_id}.json
     deps:
       - data/stage_train_test_split/test_${general.bank_id}.csv
       - models/model_${general.train_method}_${general.bank_id}.pkl
       - scripts/model_scripts/evaluate.py
       - scripts/model_scripts/${general.train_method}.py
+      - scripts/model_scripts/train.py
       - scripts/data_scripts/train_test_split.py
       - scripts/data_scripts/feature_prepare.py
       - scripts/data_scripts/fill_na.py
