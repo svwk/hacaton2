@@ -101,7 +101,7 @@ stages:
       - tree.reg_lambda
       - tree.reg_alpha
       - tree.scale_pos_weight
-      - log_reg.max_depth
+      - log_reg.max_iter
       - neural.max_depth
       - neural.learning_rate_init
       - neural.verbose
@@ -111,7 +111,7 @@ stages:
       - models/model_${general.train_method}_${general.bank_id}.pkl
 
   evaluate:
-    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${general.bank_id}.csv models/model_${general.train_method}_${general.bank_id}.pkl score_${general.train_method}_${general.bank_id}.json
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_${general.bank_id}.csv model_${general.train_method}_${general.bank_id}.pkl score_${general.train_method}_${general.bank_id}.json
     deps:
       - data/stage_train_test_split/test_${general.bank_id}.csv
       - models/model_${general.train_method}_${general.bank_id}.pkl

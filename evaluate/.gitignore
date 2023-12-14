@@ -16,3 +16,5 @@
 /score_log_A.json
 /score_dt_A.json
 /score_dt_B.json
+/score_xgbclassifier_A.json
+/score_logisticregression_A.json
