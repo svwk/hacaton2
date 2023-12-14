@@ -12,6 +12,7 @@ Experience = Literal[
 FamilyStatus = Literal[
     "Никогда в браке не состоял(а)", "Женат / замужем", "Разведён / Разведена", "Гражданский брак / совместное проживание", "Вдовец / вдова"]
 GoodsCategory = Literal["Furniture", "Mobile_devices", "Travel", "Medical_services", "Education", "Fitness", "Other"]
+LoanTerm = Literal[6, 12, 18, 24]
 Gender = Literal[0, 1]
 Snils = Literal[0, 1]
 
@@ -31,17 +32,23 @@ class ClientData(BaseModel):
     child_count: int
     snils: Snils
     loan_amount: float
-    loan_term: int
+    loan_term: LoanTerm
     goods_category: GoodsCategory
     merch_code: int
 
-    @field_validator("month_profit", "month_expense", "child_count", "loan_amount", "loan_term")
+    @field_validator("month_profit", "month_expense", "loan_amount")
+    def field_positive(cls, value: float | int) -> float | int:
+        if value <= 0:
+            raise ValueError(" must be non-negative")
+        return value
+
+    @field_validator("child_count")
     def field_non_negative(cls, value: float | int) -> float | int:
         if value < 0:
             raise ValueError(" must be non-negative")
         return value
 
-    @field_validator("loan_term", "child_count")
+    @field_validator("child_count")
     def field_is_integer(cls, value: float | int | str) -> int:
         try:
             result = int(value)

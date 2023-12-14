@@ -92,7 +92,7 @@ def set_last_seniority(application_data):
     :return: Стаж работы на последнем месте в месяцах
     """
     if not pd.isna(application_data['JobStartDate']):
-        last_seniority = relativedelta(datetime.today(), application_data['JobStartDate'])
+        last_seniority = relativedelta(datetime.today(), pd.to_datetime(application_data['JobStartDate']))
         # Стаж работы на последнем месте в месяцах
         return last_seniority.months + last_seniority.years * 12
 

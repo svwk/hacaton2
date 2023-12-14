@@ -15,6 +15,17 @@ CHILDCOUNT_CATEGORIES = ['Без детей', '1 ребенок', '2 и боле
 
 EDUCATION_CATEGORIES = ['Среднее', 'Среднее профессиональное', 'Высшее']
 
+GOODS_CATEGORIES = ["Furniture", "Mobile_devices", "Travel", "Medical_services", "Education", "Fitness", "Other"]
+
+EMPLOYMENT_CATEGORIES = ["Работаю по найму полный рабочий день/служу", "Собственное дело", "Не работаю",
+                         "Работаю по найму неполный рабочий день", "Студент", "Декретный отпуск", "Пенсионер",
+                         "Иные виды"]
+
+LOAN_TERM_CATEGORIES = [6, 12, 18, 24]
+
+FAMILY_STATUS_CATEGORIES = ["Никогда в браке не состоял(а)", "Женат / замужем", "Разведён / Разведена",
+                            "Гражданский брак / совместное проживание", "Вдовец / вдова"]
+
 # Новые категории для признаков
 SENIORITY_CATEGORIES = ['Нет стажа', 'Менее  6 месяцев', 'Менее 2 лет',
                         'Менее 5 лет', 'Менее 10 лет', '10 и более лет']
@@ -90,12 +101,13 @@ def replace_features(dataset):
                                                       categories=SENIORITY_CATEGORIES)
     last_seniority = pd.get_dummies(dataset['Последний_стаж_работы'], prefix="Посл_стаж", dtype=int)
     dataset['Код_Последний_стаж_работы'] = dataset['Последний_стаж_работы'].cat.codes
-    dataset['Категория_товара'] = pd.Categorical(dataset['Goods_category'], ordered=True)
+    dataset['Категория_товара'] = pd.Categorical(dataset['Goods_category'], ordered=True, categories=GOODS_CATEGORIES)
     dataset['Код_Категория_товара'] = dataset['Категория_товара'].cat.codes
     goods_category = pd.get_dummies(dataset['Категория_товара'], prefix="Кат_товара", dtype=int)
-    merch_code = pd.get_dummies(dataset['Merch_code'], prefix="код_магазина", dtype=int)
+    # merch_code = pd.get_dummies(dataset['Merch_code'], prefix="код_магазина", dtype=int)
     dataset['Family status'] = dataset['Family status'].apply(replace_family_status)
-    dataset['Семейное_положение'] = pd.Categorical(dataset['Family status'], ordered=True)
+    dataset['Семейное_положение'] = pd.Categorical(dataset['Family status'], ordered=True,
+                                                   categories=FAMILY_STATUS_CATEGORIES)
     dataset['Код_Семейное_положение'] = dataset['Семейное_положение'].cat.codes
     family_status = pd.get_dummies(dataset['Семейное_положение'], prefix="Сем_положение", dtype=int)
     dataset['education'] = dataset['education'].apply(replace_education)
@@ -104,14 +116,15 @@ def replace_features(dataset):
     dataset['Код_Образование'] = dataset['Образование'].cat.codes
     education = pd.get_dummies(dataset['Образование'], prefix="Образование", dtype=int)
     dataset['employment status'] = dataset['employment status'].apply(replace_employment_status)
-    dataset['Тип_занятости'] = pd.Categorical(dataset['employment status'], ordered=True)
+    dataset['Тип_занятости'] = pd.Categorical(dataset['employment status'], ordered=True,
+                                              categories=EMPLOYMENT_CATEGORIES)
     dataset['Код_Тип_занятости'] = dataset['Тип_занятости'].cat.codes
     employment_status = pd.get_dummies(dataset['Тип_занятости'], prefix="Занятость", dtype=int)
     dataset['Value'] = dataset['Value'].apply(replace_seniority)
     dataset['Стаж_работы'] = pd.Categorical(dataset['Value'], ordered=True, categories=SENIORITY_CATEGORIES)
     dataset['Код_Стаж_работы'] = dataset['Стаж_работы'].cat.codes
     value = pd.get_dummies(dataset['Стаж_работы'], prefix="Общий_стаж", dtype=int)
-    dataset['Срок_кредита'] = pd.Categorical(dataset['Loan_term'], ordered=True)
+    dataset['Срок_кредита'] = pd.Categorical(dataset['Loan_term'], ordered=True, categories=LOAN_TERM_CATEGORIES)
     loan_term = pd.get_dummies(dataset['Срок_кредита'], prefix="Срок_кредита", dtype=int)
     dataset['Колво_детей'] = dataset['ChildCount'].apply(replace_childcount)
     dataset['Колво_детей'] = pd.Categorical(dataset['Колво_детей'], ordered=True,
@@ -120,7 +133,8 @@ def replace_features(dataset):
     child_count = pd.get_dummies(dataset['Колво_детей'], prefix="Колво_детей", dtype=int)
     dataset = pd.concat(
         [dataset, value, education, employment_status, family_status, loan_term, goods_category,
-         merch_code, last_seniority, child_count],
+         # merch_code,
+         last_seniority, child_count],
         axis=1
     )
 

@@ -5,9 +5,9 @@ import yaml
 import pickle
 
 import scripts.data_scripts.create_features as cf
-from scripts.data_scripts.data_prepare import prepare_dataset
-from scripts.data_scripts.fill_na import fill_na_in_dataset
-from scripts.data_scripts.fix_errors import fix_errors_in_dataset
+import scripts.data_scripts.data_prepare as data_prepare
+import scripts.data_scripts.fill_na as fill_na
+import scripts.data_scripts.fix_errors as fix_errors
 import scripts.data_scripts.feature_prepare as fp
 
 
@@ -27,35 +27,29 @@ def predict(client):
     num_columns = ['Ежемесячный_доход', 'Ежемесячный_расход', 'Сумма_заказа', 'Кредитная_нагрузка']
 
     client_df = convert_data_format(client)
-    client_df = fill_na_in_dataset(client_df)
-    client_df = prepare_dataset(client_df)
-    client_df = fix_errors_in_dataset(client_df)
+    client_df = fill_na.fill_na_in_dataset(client_df)
+    client_df = data_prepare.prepare_dataset(client_df)
+    client_df = fix_errors.fix_errors_in_dataset(client_df)
     client_df = cf.replace_features(client_df)
 
-    bank_ids=['A', 'B', 'C', 'D', 'E']
-    preds=[]
+    bank_ids = ['A', 'B', 'C', 'D', 'E']
+    predictions = {}
+
     for bank_id in bank_ids:
         scaler_filename = f'scaler_{bank_id}.pkl'
         scaler_full_filename = os.path.join(model_dir, scaler_filename)
         standard_scaler = joblib.load(scaler_full_filename)
 
-        filename_model = os.path.join(model_dir, 'models', f'model_{train_method}_{bank_id}.pkl')
-        df = fp.feature_prepare_for_bank (client_df, bank_id,standard_scaler, num_columns)
+        filename_model = os.path.join(model_dir, f'model_{train_method}_{bank_id}.pkl')
+        df = fp.feature_prepare_for_bank(client_df, bank_id, standard_scaler, num_columns)
 
         with open(filename_model, "rb") as fd:
             clf = pickle.load(fd)
-            pred = clf.predict(client_df)
-            preds.append(pred)
+            cols_when_model_builds = clf.get_booster().feature_names
+            df = df[cols_when_model_builds]
+            predictions[f'Bank{bank_id}_decision'] = clf.predict(df)
 
-    predictions = {
-        'BankA_decision': 1,
-        'BankB_decision': 1,
-        'BankC_decision': 1,
-        'BankD_decision': 1,
-        'BankE_decision': 1,
-    }
-
-    return preds
+    return predictions
 
 
 def convert_data_format(raw_data):
