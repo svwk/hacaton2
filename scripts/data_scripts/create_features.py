@@ -6,8 +6,8 @@ import numpy as np
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from data_methods import create_stage
-import utils.seniority_cats as sc
+from scripts.data_scripts.data_methods import create_stage
+import scripts.data_scripts.utils.seniority_cats as sc
 
 DECISION_CATEGORIES = ['denied', 'success', 'error']
 

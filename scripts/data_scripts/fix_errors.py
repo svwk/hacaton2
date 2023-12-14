@@ -6,9 +6,9 @@ import pandas as pd
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
-from data_methods import create_stage
-from utils.seniority_cats import months_seniority_to_cat, seniority_cat_to_month_count
-from utils.seniority_cats import set_last_seniority
+from scripts.data_scripts.data_methods import create_stage
+from scripts.data_scripts.utils.seniority_cats import months_seniority_to_cat, seniority_cat_to_month_count
+from scripts.data_scripts.utils.seniority_cats import set_last_seniority
 
 
 # Прожиточный минимум
