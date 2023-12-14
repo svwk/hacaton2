@@ -7,6 +7,10 @@ from scripts.data_scripts.fix_errors import fix_errors_in_dataset
 
 
 def predict(client):
+    """
+    Предсказание ообрения банками данного клиента
+    :param client: данные в клиента
+    """
     client_df = convert_data_format(client)
     client_df = fill_na_in_dataset(client_df)
     client_df = prepare_dataset(client_df)
@@ -25,6 +29,10 @@ def predict(client):
 
 
 def convert_data_format(raw_data):
+    """
+    Конвертация данных из формата для API-контракта во внутренний формат
+    :param raw_data: данные в исходном формате
+    """
     data = {
         "SkillFactory_Id": raw_data.skillfactory_id,
         "BirthDate": raw_data.birth_date,
