@@ -3,14 +3,13 @@
 
 import numpy as np
 import pandas as pd
-
-from data_methods import create_stage
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
-from data_prepare import prepare_dataset
+from data_methods import create_stage
 from utils.seniority_cats import months_seniority_to_cat, seniority_cat_to_month_count
 from utils.seniority_cats import set_last_seniority
+
 
 # Прожиточный минимум
 ADULT_LIVING_WAGE = 15669
@@ -19,19 +18,20 @@ CHILD_LIVING_WAGE = 13944
 
 def fix_errors_in_dataset(source_dataset):
     """
-    Исправление аномалий в данных
+    Исправление ошибок и аномалий в данных
     :param source_dataset:  Исходный датасет
     """
 
     df = source_dataset.copy()
 
     # Удаление выбросов
-    features = ["MonthProfit", "MonthExpense"]
-    for feature in features:
+    features_to_clear = ["MonthProfit", "MonthExpense"]
+    for feature in features_to_clear:
         lower_bound, upper_bound = get_bounds((df[feature]))
         df = df.drop(df[(df[feature] < lower_bound) | (df[feature] > upper_bound)].index)
     df = df.reset_index(drop=True)
 
+    # Исправление аномалий
     df = df.apply(fix_seniority, axis=1)
     df = df.apply(fix_expense, axis=1)
 
@@ -47,7 +47,7 @@ def fix_expense(application_data):
     # Реальный расход пользователя, если он один в семье
     real_expense = ADULT_LIVING_WAGE
 
-    # Расходы на содержание супруга/супруги при наличии
+    # Расходы на содержание супруга/супруги (при наличии)
     if check_family_status(application_data['Family status']):
         real_expense += ADULT_LIVING_WAGE
 
@@ -108,22 +108,19 @@ def fix_seniority(application_data):
             application_data['employment status'] != "Не работаю"):
         # Стаж работы на последнем месте в месяцах
         last_seniority_in_months = set_last_seniority(application_data)
-        #     relativedelta(datetime.today(), application_data['JobStartDate'])
-        # # Стаж работы на последнем месте в месяцах
-        # last_seniority_in_months = last_seniority.months + last_seniority.years * 12
 
         # Стаж на последнем рабочем месте не может быть больше,
         # чем максимально возможный трудовой стаж
         # Общий стаж не может быть меньше, чем стаж на последнем рабочем  месте
         new_last_seniority = min(last_seniority_in_months, max_seniority_in_months, new_total_seniority)
 
-        # new_total_seniority = max(new_total_seniority, new_last_seniority)
-
+        # Корректировка стажа на последнем рабочем  месте
         if new_last_seniority != last_seniority_in_months:
             application_data['JobStartDate'] = datetime.strftime((date.today() -
-                                                                  relativedelta(months=new_last_seniority)),
-                                                                 "%Y-%m-%d %H:%M:%S")
+                    relativedelta(months=new_last_seniority)),
+                                            "%Y-%m-%d %H:%M:%S")
 
+    # Корректировка общего стажа
     if new_total_seniority != total_seniority_in_months:
         application_data['Value'] = months_seniority_to_cat(new_total_seniority)
 
@@ -131,21 +128,21 @@ def fix_seniority(application_data):
 
 
 def search_outliers(feature):
-    """Функция принимает набор значений  признака и
-    возвращает массив индексов тех значений, которые являются выбросами
-
-        Returns:
-            int: количество выбросов в столбце
     """
+    Поиск выбросов в значениях признака
+    :param feature: Значения признака
+    :return: Количество выбросов в столбце
+    """
+
     lower_bound, upper_bound = get_bounds(feature)
     return np.where((feature < lower_bound) | (feature > upper_bound))[0]
 
 
 def get_bounds(feature):
     """
-    Вычисляет пределы для нахождения выбросов
-    :param feature: набор данных
-    :return: нижняя и верхняя граница пределов
+    Вычисляет пределы значений для нахождения выбросов
+    :param feature: Значения признака
+    :return: Нижняя и верхняя граница пределов
     """
     q1, q3 = np.percentile(feature, [25, 85])
     iqr = q3 - q1
