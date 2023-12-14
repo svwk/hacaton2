@@ -149,23 +149,23 @@ stages:
       size: 4559
     params:
       params.yaml:
-        general.bank_id: C
+        general.bank_id: D
     outs:
-    - path: data/stage_feature_prepare/dataset_C.csv
+    - path: data/stage_feature_prepare/dataset_D.csv
       hash: md5
-      md5: 303da98cd726a1946b7ec22e7867c688
-      size: 2858817
-    - path: models/scaler_C.pkl
+      md5: 5bc46966aa1929784145a131cec2a704
+      size: 2864501
+    - path: models/scaler_D.pkl
       hash: md5
       md5: 573514b600e4371dbd2ef9d9266a16bd
       size: 1159
   train_test_split:
-    cmd: python scripts/data_scripts/train_test_split.py data/stage_feature_prepare/dataset_C.csv
+    cmd: python scripts/data_scripts/train_test_split.py data/stage_feature_prepare/dataset_D.csv
     deps:
-    - path: data/stage_feature_prepare/dataset_C.csv
+    - path: data/stage_feature_prepare/dataset_D.csv
       hash: md5
-      md5: 303da98cd726a1946b7ec22e7867c688
-      size: 2858817
+      md5: 5bc46966aa1929784145a131cec2a704
+      size: 2864501
     - path: scripts/data_scripts/create_features.py
       hash: md5
       md5: 7fe352683e46693ead22baa8807686ac
@@ -200,24 +200,24 @@ stages:
       size: 4559
     params:
       params.yaml:
-        general.bank_id: C
+        general.bank_id: D
         split.split_ratio: 0.3
     outs:
-    - path: data/stage_train_test_split/test_C.csv
+    - path: data/stage_train_test_split/test_D.csv
       hash: md5
-      md5: 597f05165379dc5b91620b4c90bb4e17
-      size: 845334
-    - path: data/stage_train_test_split/train_C.csv
+      md5: 2bd13da9cda0229dd00f0a43aa1eb597
+      size: 846936
+    - path: data/stage_train_test_split/train_D.csv
       hash: md5
-      md5: 76c4b4c3559fabd596e1c27136e08acf
-      size: 1967175
+      md5: b33fcfef05accae0e74df9557dddf9cc
+      size: 1971313
   train:
-    cmd: python scripts/model_scripts/xgbclassifier.py data/stage_train_test_split/train_C.csv
+    cmd: python scripts/model_scripts/xgbclassifier.py data/stage_train_test_split/train_D.csv
     deps:
-    - path: data/stage_train_test_split/train_C.csv
+    - path: data/stage_train_test_split/train_D.csv
       hash: md5
-      md5: 76c4b4c3559fabd596e1c27136e08acf
-      size: 1967175
+      md5: b33fcfef05accae0e74df9557dddf9cc
+      size: 1971313
     - path: scripts/data_scripts/create_features.py
       hash: md5
       md5: 7fe352683e46693ead22baa8807686ac
@@ -256,7 +256,7 @@ stages:
       size: 2673
     params:
       params.yaml:
-        general.bank_id: C
+        general.bank_id: D
         general.train_method: xgbclassifier
         log_reg.max_iter: 15
         neural.hidden_layer_sizes_x: 6
@@ -271,22 +271,22 @@ stages:
         tree.reg_lambda: 2
         tree.scale_pos_weight: 9
     outs:
-    - path: models/model_xgbclassifier_C.pkl
+    - path: models/model_xgbclassifier_D.pkl
       hash: md5
-      md5: 4df4091a09ea3eeb2f96ebee34dfcfd7
-      size: 4801698
+      md5: 44f412d8405c2768fb57c7112c4302de
+      size: 4248425
   evaluate:
-    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_C.csv
-      model_xgbclassifier_C.pkl score_xgbclassifier_C.json
+    cmd: python scripts/model_scripts/evaluate.py data/stage_train_test_split/test_D.csv
+      model_xgbclassifier_D.pkl score_xgbclassifier_D.json
     deps:
-    - path: data/stage_train_test_split/test_C.csv
+    - path: data/stage_train_test_split/test_D.csv
       hash: md5
-      md5: 597f05165379dc5b91620b4c90bb4e17
-      size: 845334
-    - path: models/model_xgbclassifier_C.pkl
+      md5: 2bd13da9cda0229dd00f0a43aa1eb597
+      size: 846936
+    - path: models/model_xgbclassifier_D.pkl
       hash: md5
-      md5: 4df4091a09ea3eeb2f96ebee34dfcfd7
-      size: 4801698
+      md5: 44f412d8405c2768fb57c7112c4302de
+      size: 4248425
     - path: scripts/data_scripts/create_features.py
       hash: md5
       md5: 7fe352683e46693ead22baa8807686ac
@@ -329,10 +329,10 @@ stages:
       size: 2673
     params:
       params.yaml:
-        general.bank_id: C
+        general.bank_id: D
         general.train_method: xgbclassifier
     outs:
-    - path: evaluate/score_xgbclassifier_C.json
+    - path: evaluate/score_xgbclassifier_D.json
       hash: md5
-      md5: d5d8ec7d942a6c6cc8664009839ed0e0
+      md5: f79e0338b1c4d5471dc365b49c1e76de
       size: 32
