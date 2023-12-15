@@ -1,9 +1,10 @@
 #! python
 # -*- coding: UTF-8 -*-
-
+"""
+Подготговка датасета для определенного банка
+"""
 import sys
 import os
-import yaml
 import joblib
 import pandas as pd
 import numpy as np

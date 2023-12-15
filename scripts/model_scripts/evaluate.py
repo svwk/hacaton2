@@ -1,5 +1,8 @@
 #! python
 # -*- coding: UTF-8 -*-
+"""
+Вычисление метрик
+"""
 import os
 import sys
 import pickle
