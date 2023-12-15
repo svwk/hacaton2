@@ -11,7 +11,13 @@
 
 ## Описание проекта
 
-Документация по пректу: https://docs.google.com/document/d/1ldHxEmv_BF40ypIDIVLEFyWeYvf5cZ_mLtOqN6zXH6o/edit?usp=sharing
+Документация по пректу:
+
+https://docs.google.com/document/d/1ldHxEmv_BF40ypIDIVLEFyWeYvf5cZ_mLtOqN6zXH6o/edit?usp=sharing
+
+ТЗ и устав: 
+
+https://drive.google.com/drive/folders/1TsD65891oOuWmTon0huSg6wxPrmLOPkG?usp=drive_link
 
 ### Цели и задачи проекта
 Создание ML-модели и web-приложения на ее основе для предсказания вероятности получения кредита клиентом в разных банках, чтобы повысить конверсию бизнеса и помочь клиентам принимать информированные решения.
