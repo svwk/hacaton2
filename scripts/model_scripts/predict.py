@@ -1,3 +1,6 @@
+#! python
+# -*- coding: UTF-8 -*-
+
 import joblib
 import pandas as pd
 import os
@@ -26,12 +29,14 @@ def predict(client):
     train_method = params["general"]["train_method"]
     num_columns = ['Ежемесячный_доход', 'Ежемесячный_расход', 'Сумма_заказа', 'Кредитная_нагрузка']
 
+    # Предобработка данных анкеты
     client_df = convert_data_format(client)
     client_df = fill_na.fill_na_in_dataset(client_df)
     client_df = data_prepare.prepare_dataset(client_df)
     client_df = fix_errors.fix_errors_in_dataset(client_df)
     client_df = cf.replace_features(client_df)
 
+    # Предсказания для банков
     bank_ids = ['A', 'B', 'C', 'D', 'E']
     predictions = {}
 
